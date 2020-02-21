@@ -2,7 +2,7 @@ export default {
   /**
    * @description 配置显示在浏览器标签的title
    */
-  title: 'DBmoitor 数据库监控平台',
+  title: '数据中心综合运维服务平台',
   /**
    * @description token在Cookie中存储的天数，默认1天
    */

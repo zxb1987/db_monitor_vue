@@ -6,11 +6,11 @@
   <div class="login">
     <div class="login-con">
       <Card icon="log-in"
-            title="欢迎登录"
+            title="欢迎登录数据综合服务系统"
             :bordered="false">
         <div class="form-con">
           <login-form @on-success-valid="handleSubmit"></login-form>
-          <p class="login-tip">请输入账户密码</p>
+          <p class="login-tip">支持 本地 e-mail LDAP登录</p>
         </div>
       </Card>
     </div>
