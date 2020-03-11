@@ -149,9 +149,9 @@
 </template>
 
 <script>
-import { getUserList, createUser, updateUser, deleteUser } from '@/api/archives-users'
+import { createUser, deleteUser, getUserList, updateUser } from '@/api/archives-users'
 import { hasOneOf } from '@/libs/tools'
-import { Tag } from 'iview'
+
 export default {
   data () {
     return {
@@ -432,6 +432,7 @@ export default {
   }
 }
 </script>
+
 <style>
 .demo-drawer-footer {
   width: 100%;

@@ -274,9 +274,10 @@
 </template>
 
 <script>
-import { getLinuxList, createLinux, updateLinux, deleteLinux } from '@/api/assets'
+import { createLinux, deleteLinux, getLinuxList, updateLinux } from '@/api/assets'
 import { hasOneOf } from '@/libs/tools'
 import { Tag } from 'iview'
+
 export default {
   data () {
     return {
@@ -638,6 +639,7 @@ export default {
   }
 }
 </script>
+
 <style>
 .demo-drawer-footer {
   width: 100%;
