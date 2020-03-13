@@ -147,7 +147,7 @@
 </template>
 
 <script>
-import { getAlarmConf, updateAlarmConf } from '@/api/system'
+import { getAlarmConf, createAlarmConf, updateAlarmConf } from '@/api/system'
 import { hasOneOf } from '@/libs/tools'
 export default {
   data () {
