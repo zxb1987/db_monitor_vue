@@ -25,9 +25,20 @@ yarn run dev
 
 ## DEMO
 
-> http://122.51.204.250:8080/
+> 全新数据库监控平台已发布
+>
+> 测试地址:http://114.116.16.6:9992
+>
+> 账号：admin 密码：123qwe
+>
+> 后端：https://github.com/zxb1987/db_monitor.git
+>
+> 前端：https://github.com/zxb1987/db_monitor_vue.git
+>
+> 前端开发IDE工具JetBrains WebStorm
+>
+> 后端开发IDE工具PyCharm
 
-> 账户 admin 密码 111111
 
 ![demo1](src/demo/demo1.jpg)
 ![demo2](src/demo/demo2.jpg)
