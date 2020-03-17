@@ -16,7 +16,7 @@ export default {
   /**
    * @description api请求基础路径
    */
-  baseUrl: {
+  publicPath: {
     // dev: 'https://www.easy-mock.com/mock/5add9213ce4d0e69998a6f51/iview-admin/',
     // dev: 'http://114.116.16.6:9991/',
     // pro: 'http://114.116.16.6:9991/'
