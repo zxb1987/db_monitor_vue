@@ -49,20 +49,35 @@
           <chart-pie3 style="height: 160px;" :value="RedisData" text="Redis"></chart-pie3>
         </Card>
       </i-col>
-      <i-col span="14">
+      <i-col span="12">
         <card>
           <p slot="title" style="font-size: larger">
-              <Icon type="ios-warning"></Icon>
-              告警消息
+            <Icon type="ios-warning"></Icon>
+            服务业务监控告警消息
           </p>
           <Scroll>
-          <List>
-        <ListItem v-for="(info) in alarminfoList" :key="info.id">
-            <ListItemMeta :title="info.alarm_header"  :description="info.alarm_content" />
-        </ListItem>
-    </List>
+            <List>
+              <ListItem :key="info.id" v-for="(info) in alarminfoList">
+                <ListItemMeta :description="info.alarm_content" :title="info.alarm_header"/>
+              </ListItem>
+            </List>
           </Scroll>
-          </card>
+        </card>
+      </i-col>
+      <i-col span="12">
+        <card>
+          <p slot="title" style="font-size: larger">
+            <Icon type="ios-warning"></Icon>
+            业务监控告警消息
+          </p>
+          <Scroll>
+            <List>
+              <ListItem :key="info.id" v-for="(info) in alarminfoList">
+                <ListItemMeta :description="info.alarm_content" :title="info.alarm_header"/>
+              </ListItem>
+            </List>
+          </Scroll>
+        </card>
       </i-col>
     </Row>
 
