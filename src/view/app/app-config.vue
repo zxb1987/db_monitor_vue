@@ -363,7 +363,6 @@ export default {
   }
 }
 </script>
-
 <style>
   .demo-drawer-footer {
     width: 100%;
