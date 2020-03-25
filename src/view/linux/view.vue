@@ -64,9 +64,9 @@
 <script>
 import { LinuxMenu } from '_c/top-menu'
 import InforCard from '_c/info-card'
-import { getLinuxStat, getLinuxStatHis, getLinuxDisk } from '@/api/linux'
+import { getLinuxDisk, getLinuxStat, getLinuxStatHis } from '@/api/linux'
 import { getAlarmInfo } from '@/api/system'
-import { ChartPie, SimpleChartPie, ChartLine1, ChartLine2 } from '_c/charts'
+import { ChartLine1, ChartLine2, ChartPie, SimpleChartPie } from '_c/charts'
 import { Tag } from 'iview'
 
 export default {
@@ -104,7 +104,7 @@ export default {
         {
           title: '磁盘',
           key: 'mount_point',
-          width: 100
+          width: 500
         },
         {
           title: '使用率',
@@ -187,19 +187,24 @@ export default {
         this.linuxinfoData = [
           {
             column1: '主机名: ' + this.linuxinfo.hostname,
-            column2: 'IP信息: ' + this.linuxinfo.ipinfo },
+            column2: 'IP信息: ' + this.linuxinfo.ipinfo
+          },
           {
             column1: 'linux发行版本: ' + this.linuxinfo.linux_version,
-            column2: '内核版本: ' + this.linuxinfo.kernel },
+            column2: '内核版本: ' + this.linuxinfo.kernel
+          },
           {
             column1: '架构: ' + this.linuxinfo.frame,
-            column2: '运行天数: ' + this.linuxinfo.updays },
+            column2: '运行天数: ' + this.linuxinfo.updays
+          },
           {
             column1: 'CPU型号: ' + this.linuxinfo.cpu_mode,
-            column2: 'CPU核数: ' + this.linuxinfo.processor },
+            column2: 'CPU核数: ' + this.linuxinfo.processor
+          },
           {
             column1: 'CPU频率: ' + this.linuxinfo.cpu_speed,
-            column2: 'CPU cache: ' + this.linuxinfo.cpu_cache }
+            column2: 'CPU cache: ' + this.linuxinfo.cpu_cache
+          }
         ]
         this.cpuusedData = this.linuxinfo.cpu_used
         this.memusedData = this.linuxinfo.mem_used

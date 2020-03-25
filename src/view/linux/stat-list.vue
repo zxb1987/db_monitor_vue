@@ -34,6 +34,7 @@
 import { getLinuxStatList } from '@/api/linux'
 import { formatDate } from '@/libs/tools'
 import { Tag } from 'iview'
+
 export default {
   data () {
     return {
@@ -46,7 +47,7 @@ export default {
         },
         {
           title: '标签',
-          width: 100,
+          width: 120,
           sortable: true,
           render: (h, params) => {
             const tags = params.row.tags
@@ -68,7 +69,7 @@ export default {
         {
           title: '主机名',
           key: 'hostname',
-          width: 80
+          width: 120
         },
         {
           title: '运行天数',

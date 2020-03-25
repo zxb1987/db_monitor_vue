@@ -74,48 +74,38 @@
                           label-position="top"
                           prop="permission_group">
                   <Input v-model="formData.permission_group"
-                         placeholder="请填写姓名" />
+                         placeholder="请填写名称"/>
                 </FormItem>
               </Col>
               <Col span="8">
-              <FormItem label="生日"
-                        label-position="top"
-                        prop="birthday">
-                <Input v-model="formData.birthday"
-                       placeholder="生日">
-                </Input>
-              </FormItem>
+                <FormItem label="生日"
+                          label-position="top"
+                          prop="birthday">
+                  <DatePicker placeholder="选择日期" style="width: 200px" type="date" v-model="formData.birthday"
+                              value="yyyymmdd"></DatePicker>
+                </FormItem>
               </Col>
             </Row>
             <Alert show-icon>联系方式</Alert>
             <Row :gutter="32">
-              <Col span="6">
-              <FormItem label="办公电话"
-                        label-position="top"
-                        prop="office_phone">
-                <Input v-model="formData.office_phone"
-                             placeholder="办公电话">
-                </Input>
-              </FormItem>
+              <Col span="12">
+                <FormItem label="办公电话"
+                          label-position="top"
+                          prop="office_phone">
+                  <Input placeholder="办公电话"
+                         v-model="formData.office_phone">
+                  </Input>
+                </FormItem>
               </Col>
-              <Col span="6">
-              <FormItem label="E-mail"
-                        label-position="top"
-                        prop="mail">
-                <Input  v-model="formData.mail"
-                             placeholder="E-mail">
-                </Input>
-              </FormItem>
+              <Col span="12">
+                <FormItem label="E-mail"
+                          label-position="top"
+                          prop="mail">
+                  <Input placeholder="E-mail"
+                         v-model="formData.mail">
+                  </Input>
+                </FormItem>
               </Col>
-<!--              <Col span="6">-->
-<!--              <FormItem label="传真"-->
-<!--                        label-position="top"-->
-<!--                        prop="fax">-->
-<!--                <InputNumber v-model="formData.fax"-->
-<!--                             placeholder="传真">-->
-<!--                </InputNumber>-->
-<!--              </FormItem>-->
-<!--              </Col>-->
             </Row>
 
           </Form>
@@ -149,8 +139,8 @@
 </template>
 
 <script>
-import { createUser, deleteUser, getUserList, updateUser } from '@/api/archives-users'
-import { hasOneOf } from '@/libs/tools'
+import { createUser, deleteUser, getUserList, updateUser } from '@/api/archives'
+import { formatDate, hasOneOf } from '@/libs/tools'
 
 export default {
   data () {
@@ -170,22 +160,37 @@ export default {
         {
           title: '部门',
           key: 'department',
-          width: 80
+          width: 140
         },
         {
           title: '权限组',
           key: 'permission_group',
-          width: 100
+          width: 120
         },
         {
           title: '生日',
           key: 'birthday',
-          width: 110
+          width: 120
         },
         {
           title: '手机号',
           key: 'office_phone',
-          width: 110
+          width: 160
+        },
+        {
+          title: 'E-mail',
+          key: 'mail',
+          width: 200
+        },
+        {
+          title: '添加时间',
+          key: 'check_time',
+          width: 140,
+          render: (h, params) => {
+            return h('div',
+              formatDate(new Date(params.row.check_time), 'yyyy-MM-dd hh:mm')
+            )
+          }
         },
         {
           title: '操作',
@@ -272,7 +277,7 @@ export default {
         user_id: '',
         user_name: '',
         department: '',
-        permission_group: 'Linux6',
+        permission_group: '默认',
         birthday: '',
         office_phone: '',
         mail: '',
@@ -289,9 +294,6 @@ export default {
           { required: true, message: '此项目必填', trigger: 'blur' }
         ],
         permission_group: [
-          { required: true, message: '此项目必填', trigger: 'blur' }
-        ],
-        birthday: [
           { required: true, message: '此项目必填', trigger: 'blur' }
         ]
       }

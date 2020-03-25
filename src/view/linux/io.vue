@@ -39,7 +39,7 @@ import { LinuxMenu } from '_c/top-menu'
 import InforCard from '_c/info-card'
 import { formatDate } from '@/libs/tools'
 import { getLinuxDisk, getLinuxIoStatHis } from '@/api/linux'
-import { ChartPie, SimpleChartPie, ChartLine2, ChartLine4, ChartLine5 } from '_c/charts'
+import { ChartLine2, ChartLine4, ChartLine5, ChartPie, SimpleChartPie } from '_c/charts'
 import { Tag } from 'iview'
 
 export default {
@@ -74,7 +74,7 @@ export default {
         {
           title: '挂载点',
           key: 'mount_point',
-          width: 100
+          width: 500
         },
         {
           title: '目录大小(GB)',

@@ -274,9 +274,10 @@
 </template>
 
 <script>
-import { getLinuxList, createLinux, updateLinux, deleteLinux } from '@/api/assets'
+import { createLinux, deleteLinux, getLinuxList, updateLinux } from '@/api/assets'
 import { hasOneOf } from '@/libs/tools'
 import { Tag } from 'iview'
+
 export default {
   data () {
     return {
@@ -295,7 +296,7 @@ export default {
         {
           title: '主机名',
           key: 'hostname',
-          width: 80
+          width: 120
         },
         {
           title: 'linux版本',

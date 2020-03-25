@@ -1,3 +1,4 @@
+<!-- 用户管理 -->
 <template>
   <Row>
     <Card>
@@ -6,9 +7,9 @@
                 type="primary"
                 v-if="addAccessAll">添加
         </Button>&nbsp;
-        <Input placeholder="业务名称"
+        <Input placeholder="应用名称"
                style="width: 100px"
-               v-model="monitoring_name_search"/>&nbsp;
+               v-model="app_name_search"/>&nbsp;
         <Button @click="search"
                 type="primary">搜索
         </Button>&nbsp;
@@ -28,54 +29,46 @@
         <br>
         <Page :page_size='page_size'
               :total="count"
-              @on-change="get_monitoring_config_parameter"
+              @on-change="get_app_parameter"
               show-elevator
               show-total/>
       </Row>
       <Row>
         <Drawer :mask-closable="this.close"
                 :styles="styles"
-                title="SQL配置"
+                title="应用信息"
                 v-model="create"
                 width="720">
           <Form :model="formData"
                 :rules="ruleValidate"
                 ref="formData">
-            <Alert show-icon>基础信息</Alert>
+            <Alert show-icon>应用信息</Alert>
             <Row :gutter="32">
               <Col span="6">
-                <FormItem label="SQL类型"
+                <FormItem label=" 应用ID"
                           label-position="top"
-                          prop="type">
-                  <Select placeholder=""
-                          v-model="formData.type">
-                    <Option value='1'>Oracle</Option>
-                    <Option value='2'>MySQL</Option>
-                    <Option value='3'>MariaDB</Option>
-                    <Option value='4'>PostgreSQL</Option>
-                    <Option value='5'>SQL Server</Option>
-                    <Option value='6'>Redis</Option>
-                  </Select>
+                          prop="app_id">
+                  <Input placeholder="自定义唯一标签"
+                         v-model="formData.app_id"/>
                 </FormItem>
               </Col>
-              <Col span="8">
-                <FormItem label="检测项目名称"
+              <Col span="6">
+                <FormItem label="应用名称"
                           label-position="top"
-                          prop="name">
-                  <Input placeholder="检测项目名称"
-                         v-model="formData.name">
-                  </Input>
+                          prop="app_name">
+                  <Input placeholder="请填写姓名"
+                         v-model="formData.app_name"/>
                 </FormItem>
               </Col>
-            </Row>
-            <Alert show-icon>SQL配置</Alert>
-            <Row :gutter="32">
-              <Col span="24">
-                <FormItem prop="judge_sql">
-                  <Input :rows="10" type="textarea" v-model="formData.judge_sql"
-                  >
+              <Col span="6">
+                <FormItem label="项目名称(英文)"
+                          label-position="top"
+                          prop="app_obj">
+                  <Input placeholder="项目名称"
+                         v-model="formData.app_obj">
                   </Input>
                 </FormItem>
+
               </Col>
             </Row>
           </Form>
@@ -90,50 +83,50 @@
         </Drawer>
 
       </Row>
+
+      <Modal @on-cancel="cancel_webssh"
+             @on-ok="ok_webssh"
+             title="Common Modal dialog box title"
+             v-model="webssh"
+             width="80">
+        <p>Content of dialog</p>
+        <p>Content of dialog</p>
+        <p>Content of dialog</p>
+        <p>Content of dialog</p>
+        <p>Content of dialog</p>
+        <p>Content of dialog</p>
+        <p>Content of dialog</p>
+        <p>Content of dialog</p>
+        <p>Content of dialog</p>
+      </Modal>
     </Card>
   </Row>
 </template>
 
 <script>
-import {
-  createMonitoringConfig,
-  deleteMonitoringConfig,
-  getMonitoringConfig,
-  updateMonitoringConfig
-} from '@/api/monitoring'
+
+import { createApp, deleteApp, getAppList, updateApp } from '@/api/app'
 import { formatDate, hasOneOf } from '@/libs/tools'
 
 export default {
   data () {
     return {
+      webssh: false,
       columns: [
         {
-          type: 'index',
-          width: 60,
-          align: 'center',
-          sortable: true
+          title: '应用ID',
+          key: 'app_id',
+          width: 120
         },
         {
-          title: 'SQL类型',
-          key: 'type',
-          width: 160,
-          render: (h, params) => {
-            const typeMap = {
-              1: { desc: 'Oracle数据库' },
-              2: { desc: 'MySQL数据库' },
-              3: { desc: 'MariaDB' },
-              4: { desc: 'PostgreSQL' },
-              5: { desc: 'SQL Server' },
-              6: { desc: 'Redis' }
-            }
-            const type = params.row.type
-            return h('div', typeMap[type]['desc'])
-          }
+          title: '应用名称',
+          key: 'app_name',
+          width: 150
         },
         {
-          title: '检测项目名称',
-          key: 'name',
-          width: 300
+          title: '项目名称',
+          key: 'app_obj',
+          width: 140
         },
         {
           title: '添加时间',
@@ -207,16 +200,16 @@ export default {
                   marginRight: '5px',
                   display: (this.deleteAccessAll !== true) ? 'none' : 'inline-block'
                 }
-              }, '删除')]
-              )
+              }, '删除')])
             ])
           }
         }
       ],
+
       data: [],
       count: 0,
       page_size: 10,
-      monitoring_name_search: '',
+      app_app_search: '',
       create: false,
       showfooter: true,
       close: false,
@@ -228,61 +221,67 @@ export default {
       },
       updateId: null,
       formData: {
-        type: '',
-        name: '',
-        judge_sql: ''
+        app_id: '',
+        app_name: '',
+        app_obj: ''
       },
       ruleValidate: {
-        type: [
+        app_id: [
           { required: true, message: '此项目必填', trigger: 'blur' }
         ],
-        name: [
+        app_name: [
           { required: true, message: '此项目必填', trigger: 'blur' }
         ],
-        judge_sql: [
+        app_obj: [
           { required: true, message: '此项目必填', trigger: 'blur' }
         ]
       }
     }
   },
   created () {
-    this.get_monitoring_config_list()
+    this.get_app_list()
   },
   computed: {
     access () {
       return this.$store.state.user.access
     },
     addAccessAll () {
-      return hasOneOf(['monitoring.add_monitoringconfig'], this.access)
+      return hasOneOf(['app.add_applist'], this.access)
     },
     updateAccessAll () {
-      return hasOneOf(['monitoring.change_monitoringconfig'], this.access)
+      return hasOneOf(['monitoring.change_applist'], this.access)
     },
     deleteAccessAll () {
-      return hasOneOf(['monitoring.delete_monitoringconfig'], this.access)
+      return hasOneOf(['monitoring.delete_applist'], this.access)
     }
   },
   methods: {
-    get_monitoring_config_parameter (parameter) {
-      console.log(parameter)
-      this.get_monitoring_config_list(`page=${parameter}`)
+    ok_webssh () {
+      this.$Message.info('确认操作')
+    },
+    cancel_webssh () {
+      this.$Message.info('取消操作')
     },
     search () {
-      console.log(this.monitoring_name_search)
-      this.get_monitoring_config_list(`name=${this.monitoring_name_search}`)
+      console.log(this.app_name_search)
+      this.get_app_list(`app_name=${this.app_name_search}`)
     },
     clear_search () {
-      this.monitoring_name_search = ''
-      this.get_monitoring_config_list()
+      this.app_name_search = ''
+      this.get_app_list()
     },
-    get_monitoring_config_list (parameter) {
-      getMonitoringConfig(parameter).then(res => {
+    get_app_list (parameter) {
+      getAppList(parameter).then(res => {
         this.data = res.data.results
         this.count = res.data.count
         console.log(this.data)
       }).catch(err => {
-        this.$Message.error(`获取告警配置信息错误 ${err}`)
+        this.$Message.error(`获取应用信息错误 ${err}`)
       })
+    },
+    get_app_parameter (parameter) {
+      console.log(parameter)
+      this.get_app_list(`page=${parameter}`)
     },
     view (index) {
       this.update(index)
@@ -294,30 +293,30 @@ export default {
         console.log()
         if (valid) {
           if (!this.updateId) {
-            createMonitoringConfig(this.formData).then(res => {
+            createApp(this.formData).then(res => {
               console.log(res)
-              this.$Message.success('新增告警配置成功!')
-              this.get_monitoring_config_list()
+              this.$Message.success('新增应用信息成功!')
+              this.get_app_list()
               this.create = false
             }).catch(err => {
               console.log(err.response)
               this.$Message.error({
-                content: `新增告警配置错误 ${Object.entries(err.response.data)}`,
+                content: `新增应用信息错误 ${Object.entries(err.response.data)}`,
                 duration: 10,
                 closable: true
               })
             })
           } else {
             console.log(this.updateId)
-            updateMonitoringConfig(this.updateId, this.formData).then(res => {
+            updateApp(this.updateId, this.formData).then(res => {
               console.log(res)
-              this.$Message.success('更新告警配置成功!')
-              this.get_monitoring_config_list()
+              this.$Message.success('更新应用信息成功!')
+              this.get_app_list()
               this.create = false
             }).catch(err => {
               console.log(err.response)
               this.$Message.error({
-                content: `更新告警配置错误 ${Object.entries(err.response.data)}`,
+                content: `更新应用信息错误 ${Object.entries(err.response.data)}`,
                 duration: 10,
                 closable: true
               })
@@ -333,20 +332,20 @@ export default {
       this.showfooter = true
       this.close = false
       this.updateId = null
-      this.formData.type = '1'
-      this.formData.name = ''
-      this.formData.judge_sql = ''
+      this.formData.app_id = ''
+      this.formData.app_name = ''
+      this.formData.app_obj = ''
     },
     remove (index, id) {
       console.log(index, id)
-      deleteMonitoringConfig(id).then(res => {
+      deleteApp(id).then(res => {
         console.log(res)
-        this.$Message.success('删除配置成功!')
+        this.$Message.success('删除应用信息成功!')
         this.data.splice(index, 1)
       }).catch(err => {
         console.log(err.response)
         this.$Message.error({
-          content: `删除配置错误 ${Object.entries(err.response.data)}`,
+          content: `删除应用信息错误 ${Object.entries(err.response.data)}`,
           duration: 10,
           closable: true
         })
@@ -356,14 +355,15 @@ export default {
       this.create = true
       this.showfooter = true
       this.close = false
-      this.formData.type = String(this.data[index].type)
-      this.formData.name = this.data[index].name
-      this.formData.judge_sql = this.data[index].judge_sql
+      this.formData.app_id = this.data[index].app_id
+      this.formData.app_name = this.data[index].app_name
+      this.formData.app_obj = this.data[index].app_obj
       this.updateId = this.data[index].id
     }
   }
 }
 </script>
+
 <style>
   .demo-drawer-footer {
     width: 100%;

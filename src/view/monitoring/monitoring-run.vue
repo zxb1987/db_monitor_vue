@@ -28,7 +28,7 @@
         <br>
         <Page :page_size='page_size'
               :total="count"
-              @on-change="get_monitoring_config_parameter"
+              @on-change="get_monitoring_run_parameter"
               show-elevator
               show-total/>
       </Row>
@@ -95,12 +95,7 @@
 </template>
 
 <script>
-import {
-  createMonitoringConfig,
-  deleteMonitoringConfig,
-  getMonitoringConfig,
-  updateMonitoringConfig
-} from '@/api/monitoring'
+import { createMonitoringRun, deleteMonitoringRun, getMonitoringRun, updateMonitoringRun } from '@/api/monitoring'
 import { formatDate, hasOneOf } from '@/libs/tools'
 
 export default {
@@ -246,37 +241,37 @@ export default {
     }
   },
   created () {
-    this.get_monitoring_config_list()
+    this.get_monitoring_run_list()
   },
   computed: {
     access () {
       return this.$store.state.user.access
     },
     addAccessAll () {
-      return hasOneOf(['monitoring.add_monitoringconfig'], this.access)
+      return hasOneOf(['monitoring.add_monitoringrun'], this.access)
     },
     updateAccessAll () {
-      return hasOneOf(['monitoring.change_monitoringconfig'], this.access)
+      return hasOneOf(['monitoring.change_monitoringrun'], this.access)
     },
     deleteAccessAll () {
-      return hasOneOf(['monitoring.delete_monitoringconfig'], this.access)
+      return hasOneOf(['monitoring.delete_monitoringrun'], this.access)
     }
   },
   methods: {
     get_monitoring_config_parameter (parameter) {
       console.log(parameter)
-      this.get_monitoring_config_list(`page=${parameter}`)
+      this.get_monitoring_run_list(`page=${parameter}`)
     },
     search () {
       console.log(this.monitoring_name_search)
-      this.get_monitoring_config_list(`name=${this.monitoring_name_search}`)
+      this.get_monitoring_run_list(`name=${this.monitoring_name_search}`)
     },
     clear_search () {
       this.monitoring_name_search = ''
-      this.get_monitoring_config_list()
+      this.get_monitoring_run_list()
     },
-    get_monitoring_config_list (parameter) {
-      getMonitoringConfig(parameter).then(res => {
+    get_monitoring_run_list (parameter) {
+      getMonitoringRun(parameter).then(res => {
         this.data = res.data.results
         this.count = res.data.count
         console.log(this.data)
@@ -294,10 +289,10 @@ export default {
         console.log()
         if (valid) {
           if (!this.updateId) {
-            createMonitoringConfig(this.formData).then(res => {
+            createMonitoringRun(this.formData).then(res => {
               console.log(res)
               this.$Message.success('新增告警配置成功!')
-              this.get_monitoring_config_list()
+              this.get_monitoring_run_list()
               this.create = false
             }).catch(err => {
               console.log(err.response)
@@ -309,10 +304,10 @@ export default {
             })
           } else {
             console.log(this.updateId)
-            updateMonitoringConfig(this.updateId, this.formData).then(res => {
+            updateMonitoringRun(this.updateId, this.formData).then(res => {
               console.log(res)
               this.$Message.success('更新告警配置成功!')
-              this.get_monitoring_config_list()
+              this.get_monitoring_run_list()
               this.create = false
             }).catch(err => {
               console.log(err.response)
@@ -339,7 +334,7 @@ export default {
     },
     remove (index, id) {
       console.log(index, id)
-      deleteMonitoringConfig(id).then(res => {
+      deleteMonitoringRun(id).then(res => {
         console.log(res)
         this.$Message.success('删除配置成功!')
         this.data.splice(index, 1)
