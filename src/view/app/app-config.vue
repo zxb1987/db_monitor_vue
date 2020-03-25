@@ -104,6 +104,7 @@
 </template>
 
 <script>
+
 import { createApp, deleteApp, getAppList, updateApp } from '@/api/app'
 import { formatDate, hasOneOf } from '@/libs/tools'
 
@@ -113,7 +114,7 @@ export default {
       webssh: false,
       columns: [
         {
-          title: '应用ID1',
+          title: '应用ID1121',
           key: 'app_id',
           width: 120
         },
