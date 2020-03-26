@@ -40,6 +40,7 @@ module.exports = {
   // devServer: {
   //   proxy: 'localhost:3000'
   // }
+
   devServer: {
     host: '0.0.0.0',
     hot: true,
