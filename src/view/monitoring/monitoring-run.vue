@@ -43,21 +43,6 @@
                 ref="formData">
             <Alert show-icon>基础信息</Alert>
             <Row :gutter="32">
-              <Col span="6">
-                <FormItem label="SQL类型"
-                          label-position="top"
-                          prop="type">
-                  <Select placeholder=""
-                          v-model="formData.type">
-                    <Option value='1'>Oracle</Option>
-                    <Option value='2'>MySQL</Option>
-                    <Option value='3'>MariaDB</Option>
-                    <Option value='4'>PostgreSQL</Option>
-                    <Option value='5'>SQL Server</Option>
-                    <Option value='6'>Redis</Option>
-                  </Select>
-                </FormItem>
-              </Col>
               <Col span="8">
                 <FormItem label="检测项目名称"
                           label-position="top"
@@ -67,14 +52,36 @@
                   </Input>
                 </FormItem>
               </Col>
-            </Row>
-            <Alert show-icon>SQL配置</Alert>
-            <Row :gutter="32">
-              <Col span="24">
-                <FormItem prop="judge_sql">
-                  <Input :rows="10" type="textarea" v-model="formData.judge_sql"
-                  >
-                  </Input>
+              <Col span="6">
+                <FormItem label="SQL检测指标名称"
+                          label-position="top"
+                          prop="monitoring_run_id">
+                  <Select v-model="formData.monitoring_run_id"
+                          placeholder="选择SQL检测指标名称">
+                    <Option v-for="item in monitoringconfiglist" :value="item.name" :key="item.id"
+                            :label="item.name"></Option>
+                  </Select>
+                </FormItem>
+              </Col>
+              <Col span="6">
+                <FormItem label="数据库"
+                          label-position="top"
+                          prop="mysql_list_id">
+                  <Select v-model="formData.mysql_list_id"
+                          placeholder="选择数据库">
+                    <Option v-for="item in databases" :value="item.tags" :key="item.tags" :label="item.tags"></Option>
+                  </Select>
+                </FormItem>
+              </Col>
+              <Col span="6">
+                <FormItem label="表"
+                          label-position="top"
+                          prop="database_name">
+                  <Select v-model="formData.database_name"
+                          placeholder="选择数据库表">
+                    <Option v-for="item in databasestables" :value="item.tags" :key="item.tags"
+                            :label="item.tags"></Option>
+                  </Select>
                 </FormItem>
               </Col>
             </Row>
@@ -95,7 +102,15 @@
 </template>
 
 <script>
-import { createMonitoringRun, deleteMonitoringRun, getMonitoringRun, updateMonitoringRun } from '@/api/monitoring'
+import {
+  createMonitoringRun,
+  deleteMonitoringRun,
+  getMonitoringRun,
+  updateMonitoringRun,
+  getDatabasesTables,
+  getMonitoringConfig
+} from '@/api/monitoring'
+import { getMysqlList } from '@/api/assets'
 import { formatDate, hasOneOf } from '@/libs/tools'
 
 export default {
@@ -107,23 +122,6 @@ export default {
           width: 60,
           align: 'center',
           sortable: true
-        },
-        {
-          title: 'SQL类型',
-          key: 'type',
-          width: 160,
-          render: (h, params) => {
-            const typeMap = {
-              1: { desc: 'Oracle数据库' },
-              2: { desc: 'MySQL数据库' },
-              3: { desc: 'MariaDB' },
-              4: { desc: 'PostgreSQL' },
-              5: { desc: 'SQL Server' },
-              6: { desc: 'Redis' }
-            }
-            const type = params.row.type
-            return h('div', typeMap[type]['desc'])
-          }
         },
         {
           title: '检测项目名称',
@@ -209,6 +207,9 @@ export default {
         }
       ],
       data: [],
+      monitoringconfiglist: [],
+      databases: [],
+      databasestables: [],
       count: 0,
       page_size: 10,
       monitoring_name_search: '',
@@ -228,13 +229,7 @@ export default {
         judge_sql: ''
       },
       ruleValidate: {
-        type: [
-          { required: true, message: '此项目必填', trigger: 'blur' }
-        ],
         name: [
-          { required: true, message: '此项目必填', trigger: 'blur' }
-        ],
-        judge_sql: [
           { required: true, message: '此项目必填', trigger: 'blur' }
         ]
       }
@@ -258,7 +253,7 @@ export default {
     }
   },
   methods: {
-    get_monitoring_config_parameter (parameter) {
+    get_monitoring_run_parameter (parameter) {
       console.log(parameter)
       this.get_monitoring_run_list(`page=${parameter}`)
     },
@@ -270,6 +265,7 @@ export default {
       this.monitoring_name_search = ''
       this.get_monitoring_run_list()
     },
+
     get_monitoring_run_list (parameter) {
       getMonitoringRun(parameter).then(res => {
         this.data = res.data.results
@@ -277,6 +273,31 @@ export default {
         console.log(this.data)
       }).catch(err => {
         this.$Message.error(`获取告警配置信息错误 ${err}`)
+      })
+    },
+
+    get_monitoring_config_list (parameter) {
+      getMonitoringConfig(parameter).then(res => {
+        this.monitoringconfiglist = res.data.results
+        console.log(this.monitoringconfiglist)
+      }).catch(err => {
+        this.$Message.error(`获取数据库信息错误 ${err}`)
+      })
+    },
+    get_databases_list (parameter) {
+      getMysqlList(parameter).then(res => {
+        this.databases = res.data.results
+        console.log(this.databases)
+      }).catch(err => {
+        this.$Message.error(`获取数据库信息错误 ${err}`)
+      })
+    },
+    get_databases_tables_list (parameter) {
+      getDatabasesTables(parameter).then(res => {
+        this.databasestables = res.data.results
+        console.log(this.databasestables)
+      }).catch(err => {
+        this.$Message.error(`获取数据库表信息错误 ${err}`)
       })
     },
     view (index) {
@@ -324,13 +345,17 @@ export default {
       })
     },
     add () {
+      this.get_monitoring_config_list()
+      this.get_databases_list()
+      this.get_databases_tables_list()
       this.create = true
       this.showfooter = true
       this.close = false
       this.updateId = null
-      this.formData.type = '1'
       this.formData.name = ''
-      this.formData.judge_sql = ''
+      this.formData.mysql_list_id = ''
+      this.formData.monitoring_run_id = ''
+      this.formData.database_name = ''
     },
     remove (index, id) {
       console.log(index, id)
@@ -348,12 +373,17 @@ export default {
       })
     },
     update (index) {
+      this.get_monitoring_config_list()
+      this.get_databases_list()
+      this.get_databases_tables_list()
+
       this.create = true
       this.showfooter = true
       this.close = false
-      this.formData.type = String(this.data[index].type)
       this.formData.name = this.data[index].name
-      this.formData.judge_sql = this.data[index].judge_sql
+      this.formData.mysql_list_id = this.data[index].mysql_list_id
+      this.formData.monitoring_run_id = this.data[index].monitoring_run_id
+      this.formData.database_name = this.data[index].database_name
       this.updateId = this.data[index].id
     }
   }

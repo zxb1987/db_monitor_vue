@@ -59,10 +59,10 @@
                 </FormItem>
               </Col>
               <Col span="8">
-                <FormItem label="检测项目名称"
+                <FormItem label="SQL检测指标名称"
                           label-position="top"
                           prop="name">
-                  <Input placeholder="检测项目名称"
+                  <Input placeholder="请输入SQL检测指标名称"
                          v-model="formData.name">
                   </Input>
                 </FormItem>

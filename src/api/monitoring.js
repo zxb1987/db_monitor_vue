@@ -69,3 +69,10 @@ export const deleteMonitoringRun = id => {
     method: 'delete'
   })
 }
+
+export const getDatabasesTables = parameter => {
+  return axios.request({
+    url: `/assets/api/mysql?${parameter}`,
+    method: 'get'
+  })
+}
