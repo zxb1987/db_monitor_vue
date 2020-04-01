@@ -20,7 +20,7 @@
       <Row>
         <Table border
                :columns="columns"
-               :data="data" style="width:100%;margin-bottom: 15px">
+               :data="data" >
 
         </Table>
       </Row>
