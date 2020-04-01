@@ -56,6 +56,7 @@ export const createMonitoringRun = data => {
     method: 'post'
   })
 }
+
 export const updateMonitoringRun = (id, data) => {
   return axios.request({
     url: `/monitoring/api/monitoring-run/${id}`,
@@ -63,16 +64,10 @@ export const updateMonitoringRun = (id, data) => {
     method: 'PUT'
   })
 }
+
 export const deleteMonitoringRun = id => {
   return axios.request({
     url: `/monitoring/api/monitoring-run/${id}`,
     method: 'delete'
-  })
-}
-
-export const getDatabasesTables = parameter => {
-  return axios.request({
-    url: `/assets/api/mysql?${parameter}`,
-    method: 'get'
   })
 }

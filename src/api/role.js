@@ -12,21 +12,13 @@ export const login = ({ userName, password }) => {
   })
 }
 
-export const getUserInfo = token => {
+export const getRoleList = parameter => {
   return axios.request({
-    url: '/system/api/user_info',
-    data: {
-      token
-    },
-    method: 'post'
+    url: `/api/role-list?${parameter}`,
+    method: 'get'
   })
 }
-// export const getRoleList = parameter => {
-//   return axios.request({
-//     url: `/api/role-list?${parameter}`,
-//     method: 'get'
-//   })
-// }
+
 export const logout = token => {
   return axios.request({
     url: '/system/api/logout',
