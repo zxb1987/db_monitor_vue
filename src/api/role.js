@@ -1,30 +1,32 @@
 import axios from '@/libs/api.request'
-
-export const login = ({ userName, password }) => {
-  const data = {
-    username: userName,
-    password
-  }
-  return axios.request({
-    url: '/api/auth',
-    data,
-    method: 'post'
-  })
-}
-
+/// role/api/role?接收后台传到前台的url数据值
+// 用户角色信息表的增删改查，和后台进行数据交互的
 export const getRoleList = parameter => {
   return axios.request({
-    url: `/api/role-list?${parameter}`,
+    url: `/role/api/role?${parameter}`,
     method: 'get'
   })
 }
 
-export const logout = token => {
+export const createRole = data => {
   return axios.request({
-    url: '/system/api/logout',
-    data: {
-      token
-    },
+    url: '/role/api/role',
+    data: data,
     method: 'post'
+  })
+}
+
+export const updateRole = (id, data) => {
+  return axios.request({
+    url: `/role/api/role/${id}`,
+    data: data,
+    method: 'PUT'
+  })
+}
+
+export const deleteRole = id => {
+  return axios.request({
+    url: `/role/api/role/${id}`,
+    method: 'delete'
   })
 }

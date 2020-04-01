@@ -20,7 +20,7 @@
       <Row>
         <Table border
                :columns="columns"
-               :data="data" >
+               :data="data">
 
         </Table>
       </Row>
@@ -117,7 +117,7 @@
 </template>
 
 <script>
-import { createRole, deleteRole, getRoleList, updateRole } from '@/api/assets'
+import { createRole, deleteRole, getRoleList, updateRole } from '@/api/role'
 import { hasOneOf } from '@/libs/tools'
 import { Tag } from 'iview'
 
@@ -252,9 +252,9 @@ export default {
         role_name: '',
         role_code: '',
         role_status: 1,
-        role_remark: '',
-        role_add_date: '',
-        role_update_date: ''
+        role_remark: ''
+        // role_add_date: '',
+        // role_update_date: '',
       },
       ruleValidate: {
         role_name: [
@@ -371,8 +371,8 @@ export default {
       this.formData.role_code = ''
       this.formData.role_status = 1
       this.formData.role_remark = ''
-      this.formData.role_add_date = ''
-      this.formData.role_update_date = ''
+      // this.formData.role_add_date = ''
+      // this.formData.role_update_date = ''
     },
     remove (index, id) {
       console.log(index, id)
@@ -397,8 +397,8 @@ export default {
       this.formData.role_code = this.data[index].role_code
       this.formData.role_status = this.data[index].role_status
       this.formData.role_remark = this.data[index].role_remark
-      this.formData.role_add_date = this.data[index].role_add_date
-      this.formData.role_update_date = this.data[index].role_update_date
+      // this.formData.role_add_date = this.data[index].role_add_date
+      // this.formData.role_update_date = this.data[index].role_update_date
       this.updateId = this.data[index].id
     }
   }
