@@ -5,23 +5,20 @@
       <Row>
         <Button @click="add"
                 v-if="addAccessAll"
-                type="primary">添加
-        </Button>&nbsp;
+                type="primary">添加</Button>&nbsp;
         <Input v-model="user_name_search"
                placeholder="姓名"
-               style="width: 100px"/>&nbsp;
+               style="width: 100px" />&nbsp;
         <Button @click="search"
-                type="primary">搜索
-        </Button>&nbsp;
+                type="primary">搜索</Button>&nbsp;
         <Button @click="clear_search"
-                type="success">刷新
-        </Button>
+                type="success">刷新</Button>
       </Row>
       <br>
       <Row>
-        <Table  border
+        <Table border
                :columns="columns"
-               :data="data" style="width: auto">
+               :data="data">
 
         </Table>
       </Row>
@@ -31,7 +28,7 @@
               :page_size='page_size'
               @on-change="get_user_parameter"
               show-elevator
-              show-total/>
+              show-total />
       </Row>
       <Row>
         <Drawer title="用户信息"
@@ -45,29 +42,29 @@
             <Alert show-icon>用户信息</Alert>
             <Row :gutter="32">
               <Col span="6">
-                <FormItem label=" 用户IDuser"
-                          label-position="top"
-                          prop="user_id">
-                  <Input v-model="formData.user_id"
-                         placeholder="自定义唯一标签"/>
-                </FormItem>
+              <FormItem label=" 用户IDuser"
+                        label-position="top"
+                        prop="user_id">
+                <Input v-model="formData.user_id"
+                       placeholder="自定义唯一标签" />
+              </FormItem>
               </Col>
               <Col span="6">
-                <FormItem label="姓名"
-                          label-position="top"
-                          prop="user_name">
-                  <Input v-model="formData.user_name"
-                         placeholder="请填写姓名"/>
-                </FormItem>
+              <FormItem label="姓名"
+                        label-position="top"
+                        prop="user_name">
+                <Input v-model="formData.user_name"
+                       placeholder="请填写姓名" />
+              </FormItem>
               </Col>
               <Col span="4">
-                <FormItem label="部门"
-                          label-position="top"
-                          prop="department">
-                  <Input v-model="formData.department"
-                         placeholder="部门">
-                  </Input>
-                </FormItem>
+              <FormItem label="部门"
+                        label-position="top"
+                        prop="department">
+                <Input v-model="formData.department"
+                       placeholder="部门">
+                </Input>
+              </FormItem>
               </Col>
             </Row>
             <Row :gutter="32">
@@ -112,33 +109,31 @@
             </Row>
 
           </Form>
-          <div class="demo-drawer-footer" v-show="showfooter">
+          <div class="demo-drawer-footer" v-show="showfooter" >
             <Button style="margin-right: 8px"
-                    @click="create = false">取消
-            </Button>
+                    @click="create = false">取消</Button>
             <Button type="primary"
-                    @click="handleSubmit('formData')">提交
-            </Button>
+                    @click="handleSubmit('formData')">提交</Button>
           </div>
         </Drawer>
 
       </Row>
 
       <Modal width="80"
-             v-model="webssh"
-             title="Common Modal dialog box title"
-             @on-ok="ok_webssh"
-             @on-cancel="cancel_webssh">
+        v-model="webssh"
+        title="Common Modal dialog box title"
+        @on-ok="ok_webssh"
+        @on-cancel="cancel_webssh">
         <p>Content of dialog</p>
         <p>Content of dialog</p>
         <p>Content of dialog</p>
+              <p>Content of dialog</p>
         <p>Content of dialog</p>
         <p>Content of dialog</p>
+              <p>Content of dialog</p>
         <p>Content of dialog</p>
         <p>Content of dialog</p>
-        <p>Content of dialog</p>
-        <p>Content of dialog</p>
-      </Modal>
+    </Modal>
     </Card>
   </Row>
 </template>
@@ -154,43 +149,43 @@ export default {
       columns: [
         {
           title: '用户ID',
-          key: 'user_id'
-          // width: 120
+          key: 'user_id',
+          width: 120
         },
         {
           title: '姓名',
-          key: 'user_name'
-          // width: 150
+          key: 'user_name',
+          width: 150
         },
         {
           title: '部门',
-          key: 'department'
-          // width: 140
+          key: 'department',
+          width: 140
         },
         {
           title: '权限组',
-          key: 'permission_group'
-          // width: 120
+          key: 'permission_group',
+          width: 120
         },
         {
           title: '生日',
-          key: 'birthday'
-          // width: 120
+          key: 'birthday',
+          width: 120
         },
         {
           title: '手机号',
-          key: 'office_phone'
-          // width: 160
+          key: 'office_phone',
+          width: 160
         },
         {
           title: 'E-mail',
-          key: 'mail'
-          // width: 200
+          key: 'mail',
+          width: 200
         },
         {
           title: '添加时间',
           key: 'check_time',
-          // width: 140,
+          width: 140,
           render: (h, params) => {
             return h('div',
               formatDate(new Date(params.row.check_time), 'yyyy-MM-dd hh:mm')
@@ -441,14 +436,14 @@ export default {
 </script>
 
 <style>
-  .demo-drawer-footer {
-    width: 100%;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    border-top: 1px solid #e8e8e8;
-    padding: 10px 16px;
-    text-align: right;
-    background: #fff;
-  }
+.demo-drawer-footer {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  border-top: 1px solid #e8e8e8;
+  padding: 10px 16px;
+  text-align: right;
+  background: #fff;
+}
 </style>

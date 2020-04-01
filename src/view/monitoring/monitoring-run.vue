@@ -64,21 +64,21 @@
                 </FormItem>
               </Col>
               <Col span="6">
-                <FormItem label="数据库"
+                <FormItem label="数据库服务"
                           label-position="top"
                           prop="mysql_list_id">
                   <Select v-model="formData.mysql_list_id"
-                          placeholder="选择数据库">
+                          placeholder="选择数据库服务">
                     <Option v-for="item in databases" :value="item.tags" :key="item.tags" :label="item.tags"></Option>
                   </Select>
                 </FormItem>
               </Col>
               <Col span="6">
-                <FormItem label="表"
+                <FormItem label="数据库名称"
                           label-position="top"
                           prop="database_name">
                   <Select v-model="formData.database_name"
-                          placeholder="选择数据库表">
+                          placeholder="选择数据库名称">
                     <Option v-for="item in databasestables" :value="item.tags" :key="item.tags"
                             :label="item.tags"></Option>
                   </Select>
@@ -128,6 +128,17 @@ export default {
           key: 'name',
           width: 300
         },
+        {
+          title: '数据库服务',
+          key: 'monitoring_run_id',
+          width: 300
+        },
+        {
+          title: '数据库名称',
+          key: 'database_name',
+          width: 300
+        },
+
         {
           title: '添加时间',
           key: 'check_time',
