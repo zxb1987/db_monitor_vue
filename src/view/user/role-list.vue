@@ -1,3 +1,4 @@
+<!-- 用户管理 -->
 <template>
   <Row>
     <Card>
@@ -15,14 +16,27 @@
         <Button @click="clear_search"
                 type="success">刷新
         </Button>
+        <Button type="primary" size="large" @click="exportData(1)" style="margin-left: 8px;" shape="circle"
+                icon="ios-download-outline"> 导出原始数据
+        </Button>
+        <Button type="primary" size="large" @click="exportData(2)" style="margin-left: 8px;" shape="circle"
+                icon="ios-download-outline"> 导出排序和过滤后的数据
+        </Button>
+        <Button type="primary" size="large" @click="exportData(3)" style="margin-left: 8px;" shape="circle"
+                icon="ios-download-outline"> 导出自定义数据
+        </Button>
       </Row>
       <br>
       <Row>
         <Table border
+               ref="table"
                :columns="columns"
                :data="data">
 
         </Table>
+        <!--    selection    复选按钮 和table的ref值绑定-->
+        <Button @click="handleSelectAll(true)">全选</Button>
+        <Button @click="handleSelectAll(false)">全不选</Button>
       </Row>
       <Row>
         <br>
@@ -77,7 +91,7 @@
                   <Select v-model="formData.role_status"
                           placeholder="">
                     <Option value="0">禁用</Option>
-                    <Option value="1">启用</Option>
+                    <Option value="1">正常</Option>
                   </Select>
                 </FormItem>
               </Col>
@@ -117,8 +131,8 @@
 </template>
 
 <script>
-import { createRole, deleteRole, getRoleList, updateRole } from '@/api/role'
-import { hasOneOf } from '@/libs/tools'
+import { createRole, getRoleList, updateRole, deleteRole } from '@/api/role'
+import { formatDate, hasOneOf } from '@/libs/tools'
 import { Tag } from 'iview'
 
 export default {
@@ -127,43 +141,84 @@ export default {
       webssh: false,
       columns: [
         {
+          type: 'selection',
+          width: 50,
+          align: 'center'
+        },
+        {
           title: '角色名称',
           key: 'role_name',
+          resizable: true,
+          'sortable': true,
           width: 120
         },
         {
           title: '角色代码',
           key: 'role_code',
+          resizable: true,
+          'sortable': true,
           width: 150
         },
-
         {
           title: '角色备注',
           key: 'role_remark',
-          width: 100
+          resizable: true,
+          'sortable': true,
+          width: 150
         },
         {
           title: '角色添加日期',
           key: 'role_add_date',
-          width: 110
+          resizable: true,
+          'sortable': true,
+          width: 200,
+          render: (h, params) => {
+            return h('div',
+              formatDate(new Date(params.row.role_add_date), 'yyyy-MM-dd hh:mm:ss')
+            )
+          }
         },
         {
           title: '角色修改日期',
           key: 'role_update_date',
-          width: 110
+          resizable: true,
+          'sortable': true,
+          width: 200,
+          render: (h, params) => {
+            return h('div',
+              formatDate(new Date(params.row.role_update_date), 'yyyy-MM-dd hh:mm:ss')
+            )
+          }
         },
         {
           title: '角色状态',
           key: 'role_status',
-          width: 90,
+          width: 120,
           render: (h, params) => {
             const levelMap = {
-              0: { color: 'green', desc: '禁用' },
-              1: { color: 'gray', desc: '启用' }
-
+              true: { color: 'green', desc: '正常' },
+              false: { color: 'red', desc: '禁用' }
             }
-            const system_level = params.row.system_level
-            return h(Tag, { props: { color: levelMap[system_level]['color'] } }, levelMap[system_level]['desc'])
+            const role_status = params.row.role_status
+            return h(Tag, { props: { color: levelMap[role_status]['color'] } }, levelMap[role_status]['desc'])
+          },
+          filters: [
+            {
+              label: '禁用',
+              value: false
+            },
+            {
+              label: '正常',
+              value: true
+            }
+          ],
+          filterMultiple: false,
+          filterMethod (value, row) {
+            if (value === false) {
+              return row.role_status === false
+            } else if (value === true) {
+              return row.role_status === true
+            }
           }
         },
 
@@ -251,10 +306,8 @@ export default {
       formData: {
         role_name: '',
         role_code: '',
-        role_status: 1,
+        role_status: 0,
         role_remark: ''
-        // role_add_date: '',
-        // role_update_date: '',
       },
       ruleValidate: {
         role_name: [
@@ -263,9 +316,9 @@ export default {
         role_code: [
           { required: true, message: '此项目必填', trigger: 'blur' }
         ],
-        role_status: [
-          { required: true, message: '此项目必填', trigger: 'blur' }
-        ],
+        // role_status: [
+        //   {required: true, message: '此项目必填', trigger: 'blur'}
+        // ],
         role_remark: [
           { required: true, message: '此项目必填', trigger: 'blur' }
         ]
@@ -291,6 +344,10 @@ export default {
     }
   },
   methods: {
+    // 全选按钮操作实现
+    handleSelectAll (status) {
+      this.$refs.table.selectAll(status)
+    },
     ok_webssh () {
       this.$Message.info('确认操作')
     },
@@ -362,6 +419,7 @@ export default {
         }
       })
     },
+
     add () {
       this.create = true
       this.showfooter = true
@@ -369,16 +427,14 @@ export default {
       this.updateId = null
       this.formData.role_name = ''
       this.formData.role_code = ''
-      this.formData.role_status = 1
+      this.formData.role_status = 0
       this.formData.role_remark = ''
-      // this.formData.role_add_date = ''
-      // this.formData.role_update_date = ''
     },
     remove (index, id) {
       console.log(index, id)
       deleteRole(id).then(res => {
         console.log(res)
-        this.$Message.success('删除角色成功!')
+        this.$Message.success('删除角色信息成功!')
         this.data.splice(index, 1)
       }).catch(err => {
         console.log(err.response)
@@ -397,13 +453,30 @@ export default {
       this.formData.role_code = this.data[index].role_code
       this.formData.role_status = this.data[index].role_status
       this.formData.role_remark = this.data[index].role_remark
-      // this.formData.role_add_date = this.data[index].role_add_date
-      // this.formData.role_update_date = this.data[index].role_update_date
       this.updateId = this.data[index].id
+    },
+
+    exportData (type) {
+      if (type === 1) {
+        this.$refs.table.exportCsv({
+          filename: '原始数据'
+        })
+      } else if (type === 2) {
+        this.$refs.table.exportCsv({
+          filename: '排序筛选后的数据',
+          original: false
+        })
+      } else if (type === 3) {
+        this.$refs.table.exportCsv({
+          filename: '自定义数据',
+          columns: this.columns.filter((col, index) => index < 4),
+          data: this.get_role_list().filter((data, index) => index < 4)
+        })
+      }
     }
+
   }
 }
-
 </script>
 
 <style>
