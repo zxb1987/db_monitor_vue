@@ -42,8 +42,10 @@
         <br>
         <Page :total="count"
               :page_size='page_size'
+              size="small"
               @on-change="get_role_parameter"
               show-elevator
+              show-sizer
               show-total/>
       </Row>
       <Row>
@@ -160,7 +162,7 @@ export default {
           width: 150
         },
         {
-          title: '角色备注',
+          title: '角色描述',
           key: 'role_remark',
           resizable: true,
           'sortable': true,
@@ -357,9 +359,6 @@ export default {
     search () {
       console.log(this.role_name_search)
       this.get_role_list(`role_name=${this.role_name_search}`)
-      this.get_role_list(`role_code=${this.role_name_search}`)
-      this.get_role_list(`role_status=${this.role_name_search}`)
-      this.get_role_list(`role_remark=${this.role_name_search}`)
     },
     clear_search () {
       this.role_name_search = ''
