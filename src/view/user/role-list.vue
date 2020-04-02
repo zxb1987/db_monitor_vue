@@ -7,7 +7,7 @@
                 v-if="addAccessAll"
                 type="primary">添加
         </Button>&nbsp;
-        <Input v-model="role_name"
+        <Input v-model="role_name_search"
                placeholder="角色名称"
                style="width: 100px"/>&nbsp;
         <Button @click="search"
@@ -196,8 +196,8 @@ export default {
           width: 120,
           render: (h, params) => {
             const levelMap = {
-              true: { color: 'green', desc: '正常' },
-              false: { color: 'red', desc: '禁用' }
+              1: { color: 'green', desc: '正常' },
+              0: { color: 'red', desc: '禁用' }
             }
             const role_status = params.row.role_status
             return h(Tag, { props: { color: levelMap[role_status]['color'] } }, levelMap[role_status]['desc'])
@@ -205,19 +205,19 @@ export default {
           filters: [
             {
               label: '禁用',
-              value: false
+              value: 0
             },
             {
               label: '正常',
-              value: true
+              value: 1
             }
           ],
           filterMultiple: false,
           filterMethod (value, row) {
-            if (value === false) {
-              return row.role_status === false
-            } else if (value === true) {
-              return row.role_status === true
+            if (value === 0) {
+              return row.role_status === 0
+            } else if (value === 1) {
+              return row.role_status === 1
             }
           }
         },
@@ -306,7 +306,7 @@ export default {
       formData: {
         role_name: '',
         role_code: '',
-        role_status: 0,
+        role_status: '',
         role_remark: ''
       },
       ruleValidate: {
@@ -357,6 +357,9 @@ export default {
     search () {
       console.log(this.role_name_search)
       this.get_role_list(`role_name=${this.role_name_search}`)
+      this.get_role_list(`role_code=${this.role_name_search}`)
+      this.get_role_list(`role_status=${this.role_name_search}`)
+      this.get_role_list(`role_remark=${this.role_name_search}`)
     },
     clear_search () {
       this.role_name_search = ''
@@ -425,9 +428,10 @@ export default {
       this.showfooter = true
       this.close = false
       this.updateId = null
+
       this.formData.role_name = ''
       this.formData.role_code = ''
-      this.formData.role_status = 0
+      this.formData.role_status = ''
       this.formData.role_remark = ''
     },
     remove (index, id) {
