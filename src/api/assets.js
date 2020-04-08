@@ -119,33 +119,3 @@ export const deleteRedis = id => {
     method: 'delete'
   })
 }
-
-export const getRoleList = parameter => {
-  return axios.request({
-    url: `/assets/api/role?${parameter}`,
-    method: 'get'
-  })
-}
-
-export const createRole = data => {
-  return axios.request({
-    url: '/assets/api/role',
-    data: data,
-    method: 'post'
-  })
-}
-
-export const updateRole = (id, data) => {
-  return axios.request({
-    url: `/assets/api/role/${id}`,
-    data: data,
-    method: 'PUT'
-  })
-}
-
-export const deleteRole = id => {
-  return axios.request({
-    url: `/assets/api/role/${id}`,
-    method: 'delete'
-  })
-}

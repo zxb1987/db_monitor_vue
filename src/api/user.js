@@ -21,12 +21,7 @@ export const getUserInfo = token => {
     method: 'post'
   })
 }
-// export const getRoleList = parameter => {
-//   return axios.request({
-//     url: `/api/role-list?${parameter}`,
-//     method: 'get'
-//   })
-// }
+
 export const logout = token => {
   return axios.request({
     url: '/system/api/logout',
