@@ -365,7 +365,7 @@ export default {
                     this.handleConsole(params.row.id)
                   }
                 }
-              }, 'Console'),
+              }, '控制命令'),
               h('Button', {
                 props: {
                   type: 'primary',
