@@ -40,10 +40,14 @@
       </Row>
       <Row>
         <br>
-        <Page :total="count"
-              :page_size='page_size'
+<!--        数据分页-->
+        <Page
               size="small"
+              :total="count"
+              :current="startRow"
+              :page_size="page_size"
               @on-change="get_role_parameter"
+              @on-page-size-change="page_change"
               show-elevator
               show-sizer
               show-total/>
@@ -135,7 +139,7 @@
 <script>
 import { createRole, getRoleList, updateRole, deleteRole } from '@/api/role'
 import { formatDate, hasOneOf } from '@/libs/tools'
-import { Tag } from 'iview'
+// import { Tag } from 'iview'
 
 export default {
   data () {
@@ -144,7 +148,13 @@ export default {
       columns: [
         {
           type: 'selection',
-          width: 50,
+          width: 52,
+          align: 'center'
+        },
+        {
+          title: '序号',
+          type: 'index',
+          width: 80,
           align: 'center'
         },
         {
@@ -240,7 +250,6 @@ export default {
                   marginRight: '5px'
                 },
                 on: {
-
                   click: () => {
                     this.show = true
                     this.view(params.index)
@@ -293,6 +302,7 @@ export default {
       ],
       data: [],
       count: 0,
+      startRow: 1,
       page_size: 10,
       role_name_search: '',
       create: false,
@@ -364,19 +374,30 @@ export default {
       this.role_name_search = ''
       this.get_role_list()
     },
+    // 获取用户信息就进行分页
     get_role_list (parameter) {
       getRoleList(parameter).then(res => {
         this.data = res.data.results
         this.count = res.data.count
-        console.log(this.data)
       }).catch(err => {
         this.$Message.error(`获取角色信息错误 ${err}`)
       })
     },
-    get_role_parameter (parameter) {
-      console.log(parameter)
+
+    page_change (parameter) {
+      this.page_size = parameter
+      // console.log(parameter)
+      // console.log(this.get_role_list(parameter))
       this.get_role_list(`page=${parameter}`)
     },
+
+    // 分页选择多少页
+    // get_role_parameter (parameter) {
+    //   console.log(parameter)
+    //   this.showfooter = parameter
+    //   if (this.page_size = this.count) { this.get_role_list(`page=${parameter}`) }
+    // },
+
     view (index) {
       this.update(index)
       this.showfooter = false
@@ -384,7 +405,7 @@ export default {
     },
     handleSubmit (name) {
       this.$refs[name].validate((valid) => {
-        console.log()
+        // console.log()
         if (valid) {
           if (!this.updateId) {
             createRole(this.formData).then(res => {
