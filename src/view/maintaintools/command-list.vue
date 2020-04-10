@@ -108,7 +108,7 @@
                  @on-cancel="cancel_ssh" class="model-ssh">
 
             <div>
-              已选择的：       {{formValisshdate}}
+              <span style="margin-left: 20px">已选择的: {{formValisshdate.linux_tags_val}}</span>
               <Form ref="formValisshdate" :model="formValisshdate" :rules="ruleValidate" :label-width="80">
                 <FormItem label="数据列表" prop="linux_tags_val">
                   <Select
@@ -326,6 +326,10 @@ export default {
         user: '',
         password: ''
       },
+      formValisshdate: {
+        linux_tags_val: []
+
+      },
       ruleValidate: {
         commname: [
           { required: true, message: '此项目必填', trigger: 'blur' }
@@ -336,16 +340,9 @@ export default {
         commandparam: [
           { required: true, message: '此项目必填', trigger: 'blur' }
         ],
-        ainterest: [
+        linux_tags_val: [
           { required: true, type: 'array', min: 1, message: '请至少选择一个文件.', trigger: 'change' }
-        ],
-        binterest: [
-          { required: true, type: 'array', min: 1, message: '请至少选择一个文件', trigger: 'change' }
         ]
-      },
-      formValisshdate: {
-        // ainterest: [],
-        // binterest: []
       }
 
     }
