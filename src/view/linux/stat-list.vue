@@ -193,7 +193,8 @@ export default {
       getLinuxStatList(parameter).then(res => {
         this.data = res.data.results
         this.count = res.data.count
-        console.log(this.data)
+        // console.log(this.data)
+        // console.log(this.count)
       }).catch(err => {
         this.$Message.error(`获取linux资源信息错误 ${err}`)
       })
