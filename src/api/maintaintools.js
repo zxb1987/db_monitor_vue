@@ -6,12 +6,14 @@ export const getCommandList = parameter => {
     method: 'get'
   })
 }
+
 export const getLinuxList = parameter => {
   return axios.request({
     url: `/assets/api/linux?${parameter}`,
     method: 'get'
   })
 }
+
 export const createCommandList = data => {
   return axios.request({
     url: '/maintaintools/api/command-list',
@@ -19,6 +21,7 @@ export const createCommandList = data => {
     method: 'post'
   })
 }
+
 export const updateCommandList = (id, data) => {
   return axios.request({
     url: `/maintaintools/api/command-list/${id}`,
