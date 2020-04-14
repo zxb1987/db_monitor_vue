@@ -419,6 +419,7 @@ export default {
       this.page_size = parameter
       this.get_commd_info(`page=${parameter}`)
     },
+
     function (name) {
       document.getElementsByTagName('.ivu-modal').draggable() // 使用jqueryui中的拖拽实现模态框的拖动
     },
