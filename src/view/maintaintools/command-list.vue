@@ -417,8 +417,6 @@ export default {
     },
     page_change (parameter) {
       this.page_size = parameter
-      // console.log(parameter)
-      // console.log(this.get_commd_info(parameter))
       this.get_commd_info(`page=${parameter}`)
     },
     function (name) {
