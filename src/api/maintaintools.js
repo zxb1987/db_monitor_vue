@@ -36,3 +36,11 @@ export const deleteCommandList = id => {
     method: 'delete'
   })
 }
+
+export const exec_command = data => {
+  return axios.request({
+    url: '/maintaintools/hello/',
+    data: data,
+    method: 'post'
+  })
+}
