@@ -347,10 +347,25 @@ export default {
         {
           title: '操作',
           key: 'action',
-          width: 200,
+          width: 400,
           align: 'center',
           render: (h, params) => {
             return h('div', [
+              h('Button', {
+                props: {
+                  type: 'primary',
+                  size: 'small'
+                },
+                style: {
+                  marginRight: '5px'
+                },
+                on: {
+
+                  click: () => {
+                    this.handleConsole(params.row.id)
+                  }
+                }
+              }, '控制命令'),
               h('Button', {
                 props: {
                   type: 'primary',
@@ -635,9 +650,13 @@ export default {
       this.formData.alarm_disk = String(this.data[index].alarm_disk)
       this.formData.alarm_alert_log = String(this.data[index].alarm_alert_log)
       this.updateId = this.data[index].id
+    },
+    handleConsole (id) {
+      window.open(`/assets/api/redis/${id}`)
     }
   }
 }
+
 </script>
 <style>
 .demo-drawer-footer {

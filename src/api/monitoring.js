@@ -71,3 +71,10 @@ export const deleteMonitoringRun = id => {
     method: 'delete'
   })
 }
+
+export const getDatabasesTables = parameter => {
+  return axios.request({
+    url: `/monitoring/api/monitoring-config?${parameter}`,
+    method: 'get'
+  })
+}

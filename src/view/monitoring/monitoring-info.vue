@@ -36,22 +36,22 @@ export default {
         {
           title: '服务器',
           key: 'tags',
-          width: 80
+          width: 120
         },
         {
-          title: '告警名称',
+          title: '检测项目类型',
           key: 'monitoring_type',
-          width: 150
+          width: 200
         },
         {
-          title: '告警内容',
+          title: '检测项目类容',
           key: 'monitoring_content',
-          width: 400
+          width: 500
         },
         {
-          title: '告警时间',
+          title: '执行时间',
           key: 'monitoring_time',
-          width: 140,
+          width: 200,
           sortable: true,
           render: (h, params) => {
             return h('div',
