@@ -224,7 +224,6 @@ export default {
     success_save () {
       // to do
       if (!this.formData.sql_data && !this.formData.judge_sql) { this.$Message.error({ content: '没有写入sql ！！', duration: 5, closable: true }) }
-
       if (this.formData.sql_data && !this.formData.judge_sql) {
         this.formData.judge_sql = this.formData.sql_data
         createMonitoringConfig(this.formData).then(res => {
