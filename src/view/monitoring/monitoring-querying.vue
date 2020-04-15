@@ -187,6 +187,7 @@ export default {
     width: calc(100% - 1.2em)
   }
   table tbody{
+    width: 100%;
     height: 300px;
     overflow-y:scroll;
     display:block
@@ -238,7 +239,6 @@ export default {
     border-radius:0.4rem;
     color:#333333;
     font-size: 0.426667rem;
-    /*text-align: vertical-align;*/
     font-family:PingFangSC-Regular;
     font-weight:400;
     background:rgba(248,248,248,1);
