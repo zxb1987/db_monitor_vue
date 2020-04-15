@@ -31,7 +31,8 @@
      <!-- <div class="expot-message">
         <Row>-->
           <Button
-            type="success">导出执行结果</Button>
+            type="success" icon="ios-download-outline"
+          @click="exportData">导出执行结果</Button>
         <!--</Row>
       </div>-->
     </div>
@@ -40,7 +41,7 @@
     <div id="message-right" class="show-message">
       <div class="show-messages">
     <row>
-      <table border="0" cellpadding="1" class="show-table">
+      <table border="1" cellpadding="1" class="show-table" ref="table">
         <thead>
         <tr>
           <!-- 循环出表头，用英文的逗号拆分字串 -->
@@ -91,8 +92,8 @@ export default {
       let param = {
         'data': this.formData.sql_data
       }
-      console.log(this.formData)
-      console.log(this.formData.sql_data)
+      /* console.log(this.formData)
+      console.log(this.formData.sql_data) */
       console.log(param)
       mysqlExecute(this.formData.sql_data).then(res => {
         this.headerList = []
@@ -116,13 +117,36 @@ export default {
       }).catch(err => {
         this.$Message.error(`执行错误!! ${err}`)
       })
+    },
+    exportData () {
+      let tableHtml = document.getElementsByClassName('show-table')
+      let appendHtml = ''
+      for (let i = 0; i < tableHtml.length; i++) {
+        appendHtml += tableHtml[i].outerHTML
+      }
+      let html = "<html><head><meta charset='utf-8' /></head><body>" + appendHtml + '</body></html>'
+      // 实例化一个Blob对象，其构造函数的第一个参数是包含文件内容的数组，第二个参数是包含文件类型属性的对象
+      let blob = new Blob([html], { type: 'application/vnd.ms-excel' }) // application/octet-stream
+      // 创建一个a标签
+      let a = document.createElement('a')
+      // var a = document.getElementsByTagName("a")[0];
+      // 利用URL.createObjectURL()方法为a元素生成blob URL
+      a.href = URL.createObjectURL(blob)
+      // 设置文件名加时间戳
+      let aData = new Date()
+      /* console.log(aData) */
+      this.aDatevalue =
+            aData.getFullYear() + '-' + (aData.getMonth() + 1) + '-' + aData.getDate() + '-' + aData.getTime()
+      /* console.log(this.aDatevalue) */
+      a.download = '查询信息表' + this.aDatevalue + '.xls' // xlsx
+      a.click()
     }
   },
   created () {
-
   },
   mounted () {
   }
+
 }
 </script>
 <style scoped>
@@ -166,7 +190,7 @@ export default {
     display: inline-block;
     position:relative;
     float: left;
-    border: 1px solid black;
+    /*border: 0.5px solid black;*/
     /*float: right;*/
   }
   table
@@ -175,7 +199,7 @@ export default {
     border-collapse: collapse;
    /* margin: 0 auto;*/
     text-align: center;
-    table-layout:fixed;
+    /*table-layout:fixed;*/
   }
   table thead,
   tbody tr {
@@ -188,7 +212,7 @@ export default {
   }
   table tbody{
     width: 100%;
-    height: 300px;
+    height: 260px;
     overflow-y:scroll;
     display:block
   }
@@ -208,11 +232,12 @@ export default {
     /*text-overflow:ellipsis;*/
   }
   td:hover{
-    height: 50px;
+    height: 40px;
     display: block;
     width: 100%;
     overflow: auto;
     white-space: normal;
+    text-align: center;
   }
   table thead th
   {
