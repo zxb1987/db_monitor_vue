@@ -3,12 +3,12 @@
     <div>
     <Row>
       <Input  id="search_info"
-              placeholder="sql搜索"
+              placeholder="请输入业务名称"
               style="width: 200px" />&nbsp;
-      <Button
+      <Button @click="search"
               type="primary">搜索</Button>&nbsp;
-      <Button
-              type="success">刷新</Button>
+      <Button @click="clear_search"
+              type="success">重置</Button>
     </Row>
    <row>
     <div id="text-left" class="send-left">
@@ -24,7 +24,7 @@
           </FormItem>
         </Col>
       </Form>
-      <Button
+      <Button @click="SaveToDatabase"
               type="primary">添加保存至数据库</Button>&nbsp;
       <Button type="primary"
               @click="submit">执行</Button>&nbsp;
@@ -60,23 +60,85 @@
     </div>
     </div>
     </div>
+    <!--模态框-->
+    <Modal width="1000"
+           v-model="tostatus"
+           title="请选择配置信息"
+           @on-ok="success_save"
+           @on-cancel="cancel_save" class="model-ssh">
+
+      <Form :model="formData"
+            :rules="ruleValidate"
+            ref="formData">
+        <Alert show-icon>基础信息</Alert>
+        <Row :gutter="32">
+          <Col span="6">
+            <FormItem label="SQL类型"
+                      label-position="top"
+                      prop="type">
+              <Select placeholder=""
+                      v-model="formData.type">
+                <Option value='1'>Oracle</Option>
+                <Option value='2'>MySQL</Option>
+                <Option value='3'>MariaDB</Option>
+                <Option value='4'>PostgreSQL</Option>
+                <Option value='5'>SQL Server</Option>
+                <Option value='6'>Redis</Option>
+              </Select>
+            </FormItem>
+          </Col>
+          <Col span="8">
+            <FormItem label="SQL检测指标名称"
+                      label-position="top"
+                      prop="name">
+              <Input placeholder="请输入SQL检测指标名称"
+                     v-model="formData.name">
+              </Input>
+            </FormItem>
+          </Col>
+        </Row>
+        <Alert show-icon>重新写入SQL配置</Alert>
+        <Row :gutter="32">
+          <Col span="24">
+            <FormItem prop="judge_sql">
+              <Input :rows="10" type="textarea" v-model="formData.judge_sql"
+              >
+              </Input>
+            </FormItem>
+          </Col>
+        </Row>
+      </Form>
+
+    </Modal>
   </card>
 </template>
 <script>
 import { mysqlExecute } from '@/api/assets'
+import { createMonitoringConfig, getMonitoringConfig } from '@/api/monitoring'
 export default {
   name: 'monitoring-querying.vue',
   data () {
     return {
+      tostatus: false,
       headerList: [],
       bodyInfoList: [],
       formData: {
-        sql_data: ''
+        sql_data: '',
+        type: '',
+        name: '',
+        judge_sql: ''
       },
       ruleValidate: {
         sql_data: [
           { required: true, message: '此项目必填', trigger: 'blur' }
+        ],
+        type: [
+          { required: true, message: '此项目必填', trigger: 'blur' }
+        ],
+        name: [
+          { required: true, message: '此项目必填', trigger: 'blur' }
         ]
+
       }
     }
   },
@@ -140,8 +202,71 @@ export default {
       /* console.log(this.aDatevalue) */
       a.download = '查询信息表' + this.aDatevalue + '.xls' // xlsx
       a.click()
+    },
+    search () {
+      console.log(this.monitoring_name_search)
+      let configlist = []
+      configlist = this.get_monitoring_config_list(`name=${this.monitoring_name_search}`)
+      console.log(configlist)
+    },
+    clear_search () {
+      /* this.$router.go(0) */
+      this.formData.sql_data = ''
+      this.headerList = []
+      this.bodyInfoList = []
+    },
+    SaveToDatabase () {
+      this.tostatus = true
+      /* this.tostatus(params.index) */
+    },
+    cancel_save () {
+      this.$Message.info('取消操作')
+    },
+    success_save () {
+      // to do
+      if (!this.formData.sql_data && !this.formData.judge_sql) { this.$Message.error({ content: '没有写入sql ！！', duration: 5, closable: true }) }
+
+      if (this.formData.sql_data && !this.formData.judge_sql) {
+        this.formData.judge_sql = this.formData.sql_data
+        createMonitoringConfig(this.formData).then(res => {
+          console.log(res)
+          this.$Message.success('新增SQL配置成功!')
+        }).catch(err => {
+          console.log(err.response)
+          this.$Message.error({
+            content: `新增告SQL置错误 ${Object.entries(err.response.data)}`,
+            duration: 10,
+            closable: true
+          })
+        })
+      } else {
+        createMonitoringConfig(this.formData).then(res => {
+          console.log(res)
+          this.$Message.success('新增SQL配置成功!')
+          /* this.get_monitoring_config_list()
+                  this.create = false */
+        }).catch(err => {
+          console.log(err.response)
+          this.$Message.error({
+            content: `新增告SQL置错误 ${Object.entries(err.response.data)}`,
+            duration: 10,
+            closable: true
+          })
+        })
+        this.$Message.success({ content: '保存成功，请到SQL配置中查看', duration: 5 })
+      }
+    },
+    get_monitoring_config_list (parameter) {
+      getMonitoringConfig(parameter).then(res => {
+        this.data = res.data
+        this.count = res.data
+        console.log(this.data)
+      }).catch(err => {
+        this.$Message.error(`获取告警配置信息错误 ${err}`)
+      })
     }
   },
+
   created () {
   },
   mounted () {
