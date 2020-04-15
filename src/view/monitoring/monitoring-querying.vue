@@ -159,6 +159,7 @@ export default {
       }
       /* console.log(this.formData)
       console.log(this.formData.sql_data) */
+
       console.log(param)
       mysqlExecute(this.formData.sql_data).then(res => {
         this.headerList = []
@@ -262,6 +263,7 @@ export default {
       getMonitoringConfig(parameter).then(res => {
         console.log(res.data.results)
         document.getElementById('input_str').value = res.data.results[0].judge_sql
+        this.formData.sql_data = res.data.results[0].judge_sql
         console.log(this.dataquering)
       }).catch(err => {
         this.$Message.error(`配置信息错误 ${err}`)
