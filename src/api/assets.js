@@ -119,7 +119,6 @@ export const deleteRedis = id => {
     method: 'delete'
   })
 }
-
 // mysql添加查询  {jsondata:JSON.stringify(data)}
 export const mysqlExecute = data => {
   return axios.request({
