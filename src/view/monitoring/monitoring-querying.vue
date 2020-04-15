@@ -4,7 +4,8 @@
     <Row>
       <Input  id="search_info"
               placeholder="请输入业务名称"
-              style="width: 200px" />&nbsp;
+              style="width: 200px"
+              v-model="monitoring_name_search"/>&nbsp;
       <Button @click="search"
               type="primary">搜索</Button>&nbsp;
       <Button @click="clear_search"
@@ -19,7 +20,7 @@
           <FormItem label="mysq查询"
                     label-position="top"
                     prop="sql_data">
-                <textarea type="text" v-model="formData.sql_data"
+                <textarea id="input_str" value="" type="text" v-model="formData.sql_data"
                           placeholder="请输入自定义sql:请按照sql语法进行输入!!!"></textarea>
           </FormItem>
         </Col>
@@ -128,6 +129,8 @@ export default {
         name: '',
         judge_sql: ''
       },
+      monitoring_name_search: '',
+      dataquering: '',
       ruleValidate: {
         sql_data: [
           { required: true, message: '此项目必填', trigger: 'blur' }
@@ -203,12 +206,7 @@ export default {
       a.download = '查询信息表' + this.aDatevalue + '.xls' // xlsx
       a.click()
     },
-    search () {
-      console.log(this.monitoring_name_search)
-      let configlist = []
-      configlist = this.get_monitoring_config_list(`name=${this.monitoring_name_search}`)
-      console.log(configlist)
-    },
+
     clear_search () {
       /* this.$router.go(0) */
       this.formData.sql_data = ''
@@ -234,7 +232,7 @@ export default {
         }).catch(err => {
           console.log(err.response)
           this.$Message.error({
-            content: `新增告SQL置错误 ${Object.entries(err.response.data)}`,
+            content: `新增SQL配置错误 ${Object.entries(err.response.data)}`,
             duration: 10,
             closable: true
           })
@@ -248,21 +246,25 @@ export default {
         }).catch(err => {
           console.log(err.response)
           this.$Message.error({
-            content: `新增告SQL置错误 ${Object.entries(err.response.data)}`,
+            content: `新增SQL配置错误 ${Object.entries(err.response.data)}`,
             duration: 10,
             closable: true
           })
         })
-        this.$Message.success({ content: '保存成功，请到SQL配置中查看', duration: 5 })
+        /* this.$Message.success({ content: '保存成功，请到SQL配置中查看', duration: 5 }) */
       }
+    },
+    search () {
+      console.log(this.monitoring_name_search)
+      this.get_monitoring_config_list(`name=${this.monitoring_name_search}`)
     },
     get_monitoring_config_list (parameter) {
       getMonitoringConfig(parameter).then(res => {
-        this.data = res.data
-        this.count = res.data
-        console.log(this.data)
+        console.log(res.data.results)
+        document.getElementById('input_str').value = res.data.results[0].judge_sql
+        console.log(this.dataquering)
       }).catch(err => {
-        this.$Message.error(`获取告警配置信息错误 ${err}`)
+        this.$Message.error(`配置信息错误 ${err}`)
       })
     }
   },
