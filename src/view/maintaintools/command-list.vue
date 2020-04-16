@@ -119,19 +119,18 @@
                     v-model="formValisshdate.linux_tags_val">
                     <Option v-for="item in linuxdata" :value="item" :key="item.tags" :label="item.tags"></Option>
                   </Select>
-
                 </FormItem>
 
                 <FormItem>
-                  <Button type="primary" @click="handleSubmitssh('formValisshdate','index')">提交</Button>
+                  <Button type="primary" @click="handleSubmitssh('formValisshdate')">提交</Button>
                   <Button @click="handleReset('formValisshdate')" style="margin-left: 8px">重置</Button>
                 </FormItem>
               </Form>
 
             </div>
             <div
-              style="background-color: #000c17;font-size: small;color: #00FF00;height: 400px;margin: auto 30px ; content: initial"
-              class="ssh-result">
+              style="background-color: #000c17;font-size: small;color: #00FF00;height: 400px;margin: auto 30px ;content: initial;overflow-y: scroll;white-space: pre-wrap"
+              id="ssh_result">
               {{ssh_results}}
 
             </div>
@@ -308,7 +307,6 @@ export default {
       count: 0,
       page_size: 10,
       create: false,
-      getsshid: 0,
       showfooter: true,
       commname_search: '',
       close: false,
@@ -327,6 +325,7 @@ export default {
       },
       formValisshdate: {
         linux_tags_val: [],
+        getsshid: 0,
         host: '',
         sshport: '',
         user: '',
@@ -391,8 +390,8 @@ export default {
     get_linux_list (parameter) {
       getLinuxList(parameter).then(res => {
         this.linuxdata = res.data.results
-        // console.log('这是Linuxdate:' + this.linuxdata)
-        // console.log(this.linuxdata)
+        console.log('这是Linuxdate:', this.getsshid)
+        console.log(this.linuxdata)
       }).catch(err => {
         this.$Message.error(`获取Linux主机资源信息错误 ${err}`)
       })
@@ -506,32 +505,8 @@ export default {
       this.formData.remark = this.data[index].remark
       this.updateId = this.data[index].id
     },
-    // 执行操作
-    handleSubmitssh (name) {
-      this.$refs[name].validate((valid) => {
-        if (valid) {
-          console.log('开始传数据到后台！')
-          console.log(this.getsshid, this.linuxsshdateChange(this.formValisshdate.linux_tags_val))
-          exec_command(this.linuxsshdateChange(this.formValisshdate.linux_tags_val)).then(res => {
-            console.log('后台返回数据')
-            console.log(res)
-            this.ssh_results = res.data
-            this.$Message.success('执行命令成功!')
-            this.create = false
-          }).catch(err => {
-            console.log(err.response)
-            this.$Message.error({
-              content: `执行命令错误 ${Object.entries(err.response.data)}`,
-              duration: 10,
-              closable: true
-            })
-          })
-          // this.$Message.success('成功!')
-        } else {
-          this.$Message.error('没有选择的数据!')
-        }
-      })
-    },
+
+    // 重置
     handleReset (name) {
       this.$refs[name].resetFields()
     },
@@ -548,7 +523,7 @@ export default {
           obj.sshport = val[i].sshport
           sshparm.push(obj)
         }
-        sshparm.push(this.getsshid)
+        // sshparm.push(this.getsshid)
       }
       console.log('这是获取前端取到的linux链接数据')
       console.log(sshparm)
@@ -556,11 +531,42 @@ export default {
       return sshparm
     },
     // 获取选中的命令数据
+
     sshshowmodel (index) {
-      this.ssh = true// 模态框弹出
+      // document.getElementById('ssh_result').innerHTML = "";
+      this.ssh = true // 模态框弹出
       this.getsshid = this.data[index].id
       console.log(this.getsshid)
+      this.handleSubmitssh(name)
+    },
+    handleSubmitssh (name) {
+      this.$refs[name].validate((valid) => {
+        if (valid) {
+          console.log('开始传数据到后台！')
+          console.log(this.getsshid, this.linuxsshdateChange(this.formValisshdate.linux_tags_val))
+          exec_command(this.getsshid, this.linuxsshdateChange(this.formValisshdate.linux_tags_val)).then(res => {
+            console.log('后台返回数据')
+            console.log(res)
+            this.ssh_results = res.data
+            this.$Message.success('执行命令成功!')
+            this.create = false
+          }).catch(err => {
+            console.log('错误信息')
+            console.log(err)
+            console.log(err.response)
+            this.$Message.error({
+              content: `执行命令错误 ${Object.entries(err.response.data)}`,
+              duration: 10,
+              closable: true
+            })
+          })
+          // this.$Message.success('成功!')
+        } else {
+          this.$Message.error('没有选择的数据!')
+        }
+      })
     }
+
   }
 }
 
