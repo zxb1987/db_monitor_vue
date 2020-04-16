@@ -106,18 +106,19 @@
                  title="ssh命令执行窗口"
                  @on-ok="ok_ssh"
                  @on-cancel="cancel_ssh" class="model-ssh">
-
             <div>
-              <span style="margin-left: 20px">已选择的: {{formValisshdate.linux_tags_val}}</span>
+              <div>
+                <span style="margin-left: 20px">已选择的：</span>
+                <span style="margin-left: 10px" v-for="val in formValisshdate.linux_tags_val" :key="val.tags">{{val.tags}}</span>
+              </div>
               <Form ref="formValisshdate" :model="formValisshdate" :rules="ruleValidate" :label-width="80">
                 <FormItem label="数据列表" prop="linux_tags_val">
                   <Select
                     multiple
                     :max-tag-count="1"
                     v-model="formValisshdate.linux_tags_val">
-                    <Option v-for="item in linuxdata" :value="item.tags" :key="item.tags" :label="item.tags"></Option>
+                    <Option v-for="item in linuxdata" :value="item" :key="item.tags" :label="item.tags"></Option>
                   </Select>
-
                 </FormItem>
 
                 <FormItem>
@@ -127,13 +128,18 @@
               </Form>
 
             </div>
+            <div
+              style="background-color: #000c17;font-size: small;color: #00FF00;height: 400px;margin: auto 30px ;content: initial;overflow-y: scroll;white-space: pre-wrap"
+              id="ssh_result">
+              {{ssh_results}}
+
+            </div>
           </Modal>
 
         </Card>
       </Content>
     </Layout>
   </div>
-
 </template>
 
 <script>
@@ -142,10 +148,10 @@ import {
   getCommandList,
   createCommandList,
   updateCommandList,
+  exec_command,
   deleteCommandList
 } from '@/api/maintaintools'
 import { hasOneOf, formatDate } from '@/libs/tools'
-// import { Tag } from 'iview'
 
 export default {
   data () {
@@ -184,7 +190,6 @@ export default {
           key: 'commandparam',
           width: 200
         },
-
         {
           title: '创建时间',
           key: 'createtime',
@@ -219,7 +224,6 @@ export default {
           align: 'center',
           render: (h, params) => {
             return h('div', [
-
               h('Button', {
                 props: {
                   type: 'primary',
@@ -229,15 +233,13 @@ export default {
                   marginRight: '5px'
                 },
                 on: {
-
                   click: () => {
                     this.get_linux_list()
-                    this.ssh = true
-                    this.ssh(params.index)
+                    // this.ssh = true
+                    this.sshshowmodel(params.index)
                   }
                 }
               }, '执行命令'),
-
               h('Button', {
                 props: {
                   type: 'primary',
@@ -296,9 +298,9 @@ export default {
             ])
           }
         }
-
       ],
       data: [],
+      ssh_results: [],
       linux_tags: [],
       linuxdata: [], // 数据集合
       count: 0,
@@ -320,15 +322,13 @@ export default {
         commandparam: '',
         remark: ''
       },
-      formatDatessh: {
+      formValisshdate: {
+        linux_tags_val: [],
+        getsshid: 0,
         host: '',
         sshport: '',
         user: '',
         password: ''
-      },
-      formValisshdate: {
-        linux_tags_val: []
-
       },
       ruleValidate: {
         commname: [
@@ -344,7 +344,6 @@ export default {
           { required: true, type: 'array', min: 1, message: '请至少选择一个文件.', trigger: 'change' }
         ]
       }
-
     }
   },
   created () {
@@ -372,10 +371,6 @@ export default {
       this.$refs.selection.selectAll(status)
     },
     ok_ssh () {
-      // console.log(this.linux_tags_val)
-      this.linuxdata.push({
-
-      })
       this.$Message.info('确认操作')
     },
     cancel_ssh () {
@@ -393,7 +388,7 @@ export default {
     get_linux_list (parameter) {
       getLinuxList(parameter).then(res => {
         this.linuxdata = res.data.results
-        console.log('这是Linuxdate:' + this.linuxdata)
+        console.log('这是Linuxdate:', this.getsshid)
         console.log(this.linuxdata)
       }).catch(err => {
         this.$Message.error(`获取Linux主机资源信息错误 ${err}`)
@@ -410,29 +405,29 @@ export default {
       })
     },
     // 分页选择多少页
-    // get_maintain_parameter (parameter) {
-    //   console.log(parameter)
-    //   this.showfooter = parameter
-    //   if (this.page_size = this.count) {
-    //     this.get_commd_info(`page=${parameter}`)
-    //   }
-    // },
+    get_maintain_parameter (parameter) {
+      console.log(parameter)
+      this.showfooter = parameter
+      if (this.page_size >= this.count) {
+        this.get_commd_info(`page=${parameter}`)
+      }
+    },
+    page_change (parameter) {
+      this.page_size = parameter
+      this.get_commd_info(`page=${parameter}`)
+    },
 
-    // page_change (parameter) {
-    //   this.page_size = parameter
-    //   // console.log(parameter)
-    //   // console.log(this.get_commd_info(parameter))
-    //   this.get_commd_info(`page=${parameter}`)
-    // },
-
+    function (name) {
+      document.getElementsByTagName('.ivu-modal').draggable() // 使用jqueryui中的拖拽实现模态框的拖动
+    },
     view (index) {
       this.update(index)
       this.showfooter = false
       this.close = true
     },
+    // 新增提交
     handleSubmit (name) {
       this.$refs[name].validate((valid) => {
-        console.log()
         if (valid) {
           if (!this.updateId) {
             createCommandList(this.formData).then(res => {
@@ -471,7 +466,6 @@ export default {
     },
 
     add () {
-      this.get_linux_list()
       this.create = true
       this.showfooter = true
       this.close = false
@@ -481,6 +475,7 @@ export default {
       this.formData.commandparam = ''
       this.formData.remark = ''
     },
+    // 删除
     remove (index, id) {
       console.log(index, id)
       deleteCommandList(id).then(res => {
@@ -496,8 +491,8 @@ export default {
         })
       })
     },
+    // 更新
     update (index) {
-      this.get_linux_list()
       this.create = true
       this.showfooter = true
       this.close = false
@@ -507,17 +502,64 @@ export default {
       this.formData.remark = this.data[index].remark
       this.updateId = this.data[index].id
     },
+
+    // 重置
+    handleReset (name) {
+      this.$refs[name].resetFields()
+    },
+    // 获取选中数据
+    linuxsshdateChange (val) {
+      let sshparm = []
+      let obj = {}
+      if (val.length > 0) {
+        for (let i in val) {
+          obj = {}
+          obj.host = val[i].host
+          obj.user = val[i].user
+          obj.password = val[i].password
+          obj.sshport = val[i].sshport
+          sshparm.push(obj)
+        }
+      }
+      console.log('这是获取前端取到的linux链接数据')
+      console.log(sshparm)
+
+      return sshparm
+    },
+    // 获取选中的命令数据
+    sshshowmodel (index) {
+      this.ssh = true // 模态框弹出
+      this.ssh_results = ''// 点击模态框弹出前清空当前显示值
+      this.getsshid = this.data[index].id
+      console.log(this.getsshid)
+      this.handleSubmitssh(name)
+    },
     handleSubmitssh (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
-          this.$Message.success('成功!')
+          console.log('开始传数据到后台！')
+          console.log(this.getsshid, this.linuxsshdateChange(this.formValisshdate.linux_tags_val))
+          exec_command(this.getsshid, this.linuxsshdateChange(this.formValisshdate.linux_tags_val)).then(res => {
+            console.log('后台返回数据')
+            console.log(res)
+            this.ssh_results = res.data
+            this.$Message.success('执行命令成功!')
+            this.create = false
+          }).catch(err => {
+            console.log('错误信息')
+            console.log(err)
+            console.log(err.response)
+            this.$Message.error({
+              content: `执行命令错误 ${Object.entries(err.response.data)}`,
+              duration: 10,
+              closable: true
+            })
+          })
+          // this.$Message.success('成功!')
         } else {
           this.$Message.error('没有选择的数据!')
         }
       })
-    },
-    handleReset (name) {
-      this.$refs[name].resetFields()
     }
 
   }
