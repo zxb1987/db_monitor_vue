@@ -40,17 +40,17 @@
       </Row>
       <Row>
         <br>
-<!--        数据分页-->
+        <!--        数据分页-->
         <Page
-              size="small"
-              :total="count"
-              :current="startRow"
-              :page_size="page_size"
-              @on-change="get_role_parameter"
-              @on-page-size-change="page_change"
-              show-elevator
-              show-sizer
-              show-total/>
+          size="small"
+          :total="count"
+          :current="startRow"
+          :page_size="page_size"
+          @on-change="get_role_parameter"
+          @on-page-size-change="page_change"
+          show-elevator
+          show-sizer
+          show-total/>
       </Row>
       <Row>
         <Drawer title="角色信息"
@@ -368,7 +368,7 @@ export default {
     },
     search () {
       console.log(this.role_name_search)
-      this.get_role_list(`role_name=${this.role_name_search}` && `role_code=${this.role_name_search}`)
+      this.get_role_list(`role_name=${this.role_name_search}` && `role_code=${this.role_name_search}` && `role_remark=${this.role_name_search}`)
     },
     clear_search () {
       this.role_name_search = ''
