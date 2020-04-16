@@ -127,3 +127,25 @@ export const mysqlExecute = data => {
     method: 'post'
   })
 }
+
+export const getTestPUT = (id, data) => {
+  return axios.request({
+    url: `/assets/api/test`,
+    data: data,
+    method: 'PUT'
+  })
+}
+export const getTestPOST = (id, data) => {
+  return axios.request({
+    url: `/assets/api/test`,
+    data: data,
+    method: 'post'
+  })
+}
+export const getTestIdDelete = (id, data) => {
+  return axios.request({
+    url: `/assets/api/test/${id}`,
+    data: data,
+    method: 'delete'
+  })
+}
