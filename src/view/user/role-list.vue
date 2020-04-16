@@ -368,7 +368,7 @@ export default {
     },
     search () {
       console.log(this.role_name_search)
-      this.get_role_list(`role_name=${this.role_name_search}`)
+      this.get_role_list(`role_name=${this.role_name_search}` && `role_code=${this.role_name_search}`)
     },
     clear_search () {
       this.role_name_search = ''
