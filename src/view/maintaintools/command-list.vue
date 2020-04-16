@@ -378,7 +378,7 @@ export default {
     },
     search () {
       console.log(this.commname_search)
-      this.get_commd_info(`commname=${this.commname_search}`)
+      this.get_commd_info(`commname=${this.commname_search}` && `usecommand=${this.commname_search}`)
     },
     clear_search () {
       this.commname_search = ''
@@ -388,8 +388,8 @@ export default {
     get_linux_list (parameter) {
       getLinuxList(parameter).then(res => {
         this.linuxdata = res.data.results
-        console.log('这是Linuxdate:', this.getsshid)
-        console.log(this.linuxdata)
+        // console.log('这是Linuxdate:', this.getsshid)
+        // console.log(this.linuxdata)
       }).catch(err => {
         this.$Message.error(`获取Linux主机资源信息错误 ${err}`)
       })
