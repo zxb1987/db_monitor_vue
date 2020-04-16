@@ -130,7 +130,8 @@
             </div>
             <div
               style="background-color: #000c17;font-size: small;color: #00FF00;height: 400px;margin: auto 30px ;content: initial;overflow-y: scroll;white-space: pre-wrap"
-              id="ssh_result">
+              id="ssh_result" >
+<!--              v-for="item in ssh_results" :value="item" :key="item.tags" :label="item.tags"-->
               {{ssh_results}}
 
             </div>
@@ -535,7 +536,7 @@ export default {
     sshshowmodel (index) {
       // document.getElementById('ssh_result').innerHTML = "";
       this.ssh = true // 模态框弹出
-      this.ssh_results = ''
+      this.ssh_results = ''// 点击模态框弹出前清空当前显示值
       this.getsshid = this.data[index].id
       console.log(this.getsshid)
       this.handleSubmitssh(name)
