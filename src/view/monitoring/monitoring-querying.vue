@@ -37,6 +37,10 @@
         <!--</Row>
       </div>-->
     </div>
+     <div id="scor-right" class="send-right">
+      <!-- <h>实例列表项</h>-->
+       <monitoringOptionsList></monitoringOptionsList>
+     </div>
     </row>
     <div class="text_title"><span>查询结果：</span></div>
     <div id="message-right" class="show-message">
@@ -116,6 +120,7 @@
 <script>
 import { mysqlExecute } from '@/api/assets'
 import { createMonitoringConfig, getMonitoringConfig } from '@/api/monitoring'
+import monitoringOptionsList from './monitoringOptionsList'
 export default {
   name: 'monitoring-querying.vue',
   data () {
@@ -151,6 +156,7 @@ export default {
     }
   },
   components: {
+    monitoringOptionsList
   },
   methods: {
     submit: function () {
@@ -294,6 +300,12 @@ export default {
     height: 300px;
     border: 1px;
     solid-color: #87d068;
+  }
+  .send-right{
+    float: right;
+    width: 50%;
+    height: 300px;
+    /*background: antiquewhite;*/
   }
   .text_title{
     width: 100%;
