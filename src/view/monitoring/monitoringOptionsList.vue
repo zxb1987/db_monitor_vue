@@ -50,7 +50,6 @@
         </FormItem>
         </div>
       </row>
-
       <!--<Col span="10">
         <FormItem label="SQL返回行数"
                   label-position="top"
