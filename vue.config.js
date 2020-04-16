@@ -1,5 +1,5 @@
+/* module.exports = { css: { loaderOptions: { less: { javascriptEnabled: true, } } },} */
 const path = require('path')
-
 const resolve = dir => {
   return path.join(__dirname, dir)
 }

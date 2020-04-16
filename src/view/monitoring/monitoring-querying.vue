@@ -3,12 +3,13 @@
     <div>
     <Row>
       <Input  id="search_info"
-              placeholder="sql搜索"
-              style="width: 200px" />&nbsp;
-      <Button
+              placeholder="请输入业务名称"
+              style="width: 200px"
+              v-model="monitoring_name_search"/>&nbsp;
+      <Button @click="search"
               type="primary">搜索</Button>&nbsp;
-      <Button
-              type="success">刷新</Button>
+      <Button @click="clear_search"
+              type="success">重置</Button>
     </Row>
    <row>
     <div id="text-left" class="send-left">
@@ -19,19 +20,20 @@
           <FormItem label="mysq查询"
                     label-position="top"
                     prop="sql_data">
-                <textarea type="text" v-model="formData.sql_data"
+                <textarea id="input_str" value="" type="text" v-model="formData.sql_data"
                           placeholder="请输入自定义sql:请按照sql语法进行输入!!!"></textarea>
           </FormItem>
         </Col>
       </Form>
-      <Button
+      <Button @click="SaveToDatabase"
               type="primary">添加保存至数据库</Button>&nbsp;
       <Button type="primary"
               @click="submit">执行</Button>&nbsp;
      <!-- <div class="expot-message">
         <Row>-->
           <Button
-            type="success">导出执行结果</Button>
+            type="success" icon="ios-download-outline"
+          @click="exportData">导出执行结果</Button>
         <!--</Row>
       </div>-->
     </div>
@@ -40,7 +42,7 @@
     <div id="message-right" class="show-message">
       <div class="show-messages">
     <row>
-      <table border="0" cellpadding="1" class="show-table">
+      <table border="1" cellpadding="1" class="show-table" ref="table">
         <thead>
         <tr>
           <!-- 循环出表头，用英文的逗号拆分字串 -->
@@ -59,23 +61,87 @@
     </div>
     </div>
     </div>
+    <!--模态框-->
+    <Modal width="1000"
+           v-model="tostatus"
+           title="请选择配置信息"
+           @on-ok="success_save"
+           @on-cancel="cancel_save" class="model-ssh">
+
+      <Form :model="formData"
+            :rules="ruleValidate"
+            ref="formData">
+        <Alert show-icon>基础信息</Alert>
+        <Row :gutter="32">
+          <Col span="6">
+            <FormItem label="SQL类型"
+                      label-position="top"
+                      prop="type">
+              <Select placeholder=""
+                      v-model="formData.type">
+                <Option value='1'>Oracle</Option>
+                <Option value='2'>MySQL</Option>
+                <Option value='3'>MariaDB</Option>
+                <Option value='4'>PostgreSQL</Option>
+                <Option value='5'>SQL Server</Option>
+                <Option value='6'>Redis</Option>
+              </Select>
+            </FormItem>
+          </Col>
+          <Col span="8">
+            <FormItem label="SQL检测指标名称"
+                      label-position="top"
+                      prop="name">
+              <Input placeholder="请输入SQL检测指标名称"
+                     v-model="formData.name">
+              </Input>
+            </FormItem>
+          </Col>
+        </Row>
+        <Alert show-icon>重新写入SQL配置</Alert>
+        <Row :gutter="32">
+          <Col span="24">
+            <FormItem prop="judge_sql">
+              <Input :rows="10" type="textarea" v-model="formData.judge_sql"
+              >
+              </Input>
+            </FormItem>
+          </Col>
+        </Row>
+      </Form>
+
+    </Modal>
   </card>
 </template>
 <script>
 import { mysqlExecute } from '@/api/assets'
+import { createMonitoringConfig, getMonitoringConfig } from '@/api/monitoring'
 export default {
   name: 'monitoring-querying.vue',
   data () {
     return {
+      tostatus: false,
       headerList: [],
       bodyInfoList: [],
       formData: {
-        sql_data: ''
+        sql_data: '',
+        type: '',
+        name: '',
+        judge_sql: ''
       },
+      monitoring_name_search: '',
+      dataquering: '',
       ruleValidate: {
         sql_data: [
           { required: true, message: '此项目必填', trigger: 'blur' }
+        ],
+        type: [
+          { required: true, message: '此项目必填', trigger: 'blur' }
+        ],
+        name: [
+          { required: true, message: '此项目必填', trigger: 'blur' }
         ]
+
       }
     }
   },
@@ -91,8 +157,9 @@ export default {
       let param = {
         'data': this.formData.sql_data
       }
-      console.log(this.formData)
-      console.log(this.formData.sql_data)
+      /* console.log(this.formData)
+      console.log(this.formData.sql_data) */
+
       console.log(param)
       mysqlExecute(this.formData.sql_data).then(res => {
         this.headerList = []
@@ -116,13 +183,98 @@ export default {
       }).catch(err => {
         this.$Message.error(`执行错误!! ${err}`)
       })
+    },
+    exportData () {
+      let tableHtml = document.getElementsByClassName('show-table')
+      let appendHtml = ''
+      for (let i = 0; i < tableHtml.length; i++) {
+        appendHtml += tableHtml[i].outerHTML
+      }
+      let html = "<html><head><meta charset='utf-8' /></head><body>" + appendHtml + '</body></html>'
+      // 实例化一个Blob对象，其构造函数的第一个参数是包含文件内容的数组，第二个参数是包含文件类型属性的对象
+      let blob = new Blob([html], { type: 'application/vnd.ms-excel' }) // application/octet-stream
+      // 创建一个a标签
+      let a = document.createElement('a')
+      // var a = document.getElementsByTagName("a")[0];
+      // 利用URL.createObjectURL()方法为a元素生成blob URL
+      a.href = URL.createObjectURL(blob)
+      // 设置文件名加时间戳
+      let aData = new Date()
+      /* console.log(aData) */
+      this.aDatevalue =
+            aData.getFullYear() + '-' + (aData.getMonth() + 1) + '-' + aData.getDate() + '-' + aData.getTime()
+      /* console.log(this.aDatevalue) */
+      a.download = '查询信息表' + this.aDatevalue + '.xls' // xlsx
+      a.click()
+    },
+
+    clear_search () {
+      /* this.$router.go(0) */
+      this.formData.sql_data = ''
+      this.headerList = []
+      this.bodyInfoList = []
+    },
+    SaveToDatabase () {
+      this.tostatus = true
+      /* this.tostatus(params.index) */
+    },
+    cancel_save () {
+      this.$Message.info('取消操作')
+    },
+    success_save () {
+      // to do
+      if (!this.formData.sql_data && !this.formData.judge_sql) { this.$Message.error({ content: '没有写入sql ！！', duration: 5, closable: true }) }
+      if (this.formData.sql_data && !this.formData.judge_sql) {
+        this.formData.judge_sql = this.formData.sql_data
+        createMonitoringConfig(this.formData).then(res => {
+          console.log(res)
+          this.$Message.success('新增SQL配置成功!')
+        }).catch(err => {
+          console.log(err.response)
+          this.$Message.error({
+            content: `新增SQL配置错误 ${Object.entries(err.response.data)}`,
+            duration: 10,
+            closable: true
+          })
+        })
+      } else {
+        createMonitoringConfig(this.formData).then(res => {
+          console.log(res)
+          this.$Message.success('新增SQL配置成功!')
+          /* this.get_monitoring_config_list()
+                  this.create = false */
+        }).catch(err => {
+          console.log(err.response)
+          this.$Message.error({
+            content: `新增SQL配置错误 ${Object.entries(err.response.data)}`,
+            duration: 10,
+            closable: true
+          })
+        })
+        /* this.$Message.success({ content: '保存成功，请到SQL配置中查看', duration: 5 }) */
+      }
+    },
+    search () {
+      console.log(this.monitoring_name_search)
+      this.get_monitoring_config_list(`name=${this.monitoring_name_search}`)
+    },
+    get_monitoring_config_list (parameter) {
+      getMonitoringConfig(parameter).then(res => {
+        console.log(res.data.results)
+        document.getElementById('input_str').value = res.data.results[0].judge_sql
+        this.formData.sql_data = res.data.results[0].judge_sql
+        console.log(this.dataquering)
+      }).catch(err => {
+        this.$Message.error(`配置信息错误 ${err}`)
+      })
     }
   },
-  created () {
 
+  created () {
   },
   mounted () {
   }
+
 }
 </script>
 <style scoped>
@@ -166,7 +318,7 @@ export default {
     display: inline-block;
     position:relative;
     float: left;
-    border: 1px solid black;
+    /*border: 0.5px solid black;*/
     /*float: right;*/
   }
   table
@@ -175,7 +327,7 @@ export default {
     border-collapse: collapse;
    /* margin: 0 auto;*/
     text-align: center;
-    table-layout:fixed;
+    /*table-layout:fixed;*/
   }
   table thead,
   tbody tr {
@@ -188,7 +340,7 @@ export default {
   }
   table tbody{
     width: 100%;
-    height: 300px;
+    height: 260px;
     overflow-y:scroll;
     display:block
   }
@@ -208,11 +360,12 @@ export default {
     /*text-overflow:ellipsis;*/
   }
   td:hover{
-    height: 50px;
+    height: 40px;
     display: block;
     width: 100%;
     overflow: auto;
     white-space: normal;
+    text-align: center;
   }
   table thead th
   {
