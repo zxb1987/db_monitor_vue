@@ -274,10 +274,17 @@
 </template>
 
 <script>
-import { createLinux, deleteLinux, getLinuxList, updateLinux } from '@/api/assets'
+import {
+  createLinux,
+  deleteLinux,
+  getLinuxList,
+  updateLinux,
+  getTestPUT,
+  getTestPOST,
+  getTestIdDelete
+} from '@/api/assets'
 import { hasOneOf } from '@/libs/tools'
 import { Tag } from 'iview'
-
 export default {
   data () {
     return {
@@ -347,7 +354,7 @@ export default {
         {
           title: '操作',
           key: 'action',
-          width: 400,
+          width: 500,
           align: 'center',
           render: (h, params) => {
             return h('div', [
@@ -362,10 +369,57 @@ export default {
                 on: {
 
                   click: () => {
-                    this.handleConsole(params.row.id)
+                    this.handleConsole(params.row)
                   }
                 }
               }, '控制命令'),
+
+              h('Button', {
+                props: {
+                  type: 'primary',
+                  size: 'small'
+                },
+                style: {
+                  marginRight: '5px'
+                },
+                on: {
+
+                  click: () => {
+                    this.handleTestPUT(params.index)
+                  }
+                }
+              }, '测试PUT'),
+              h('Button', {
+                props: {
+                  type: 'primary',
+                  size: 'small'
+                },
+                style: {
+                  marginRight: '5px'
+                },
+                on: {
+
+                  click: () => {
+                    this.handleTestPOST(params.index)
+                  }
+                }
+              }, '测试POST'),
+              h('Button', {
+                props: {
+                  type: 'primary',
+                  size: 'small'
+                },
+                style: {
+                  marginRight: '5px'
+                },
+                on: {
+
+                  click: () => {
+                    this.handleTestDelete(params.index)
+                  }
+                }
+              }, '测试Delete'),
+
               h('Button', {
                 props: {
                   type: 'primary',
@@ -651,8 +705,71 @@ export default {
       this.formData.alarm_alert_log = String(this.data[index].alarm_alert_log)
       this.updateId = this.data[index].id
     },
-    handleConsole (id) {
-      window.open(`/assets/api/redis/${id}`)
+    handleConsole (row) {
+      let Base64 = require('js-base64').Base64
+      let password = Base64.encode(row.password)
+      let linuxUrl = 'http://114.116.16.6:8888/?hostname=' + row.host + '&username=root&password=' + password
+      window.open(linuxUrl)
+    },
+    handleTestPUT (index) {
+      let id = this.data[index].id
+      this.formData.tags = 1
+      this.formData.host = 2
+      this.formData.hostname = 3
+      getTestPUT(id, this.formData).then(res => {
+      }).catch(err => {
+        console.log(err.response)
+        this.$Message.error({
+          content: `测试 ${Object.entries(err.response.data)}`,
+          duration: 10,
+          closable: true
+        })
+      })
+    },
+    handleTestPOST (id) {
+      let dataJson = {
+        'user': {
+          'name': 'threedog',
+          'age': 18,
+          'sex': '男'
+        },
+        'password': '123456'
+      }
+      getTestPOST(id, dataJson).then(res => {
+      }).catch(err => {
+        console.log(err.response)
+        this.$Message.error({
+          content: `测试 ${Object.entries(err.response.data)}`,
+          duration: 10,
+          closable: true
+        })
+      })
+    },
+    handleTestDelete (id) {
+      let dataJson = {
+        'user': {
+          'name': 'threedog',
+          'age': 18,
+          'sex': '男'
+        },
+        'password': '123456'
+      }
+      getTestIdDelete(id, dataJson).then(res => {
+        console.log('>>>>>>>>>:' + res)
+        console.log(res)
+        console.log(res.data)
+        console.log(res.data.error)
+        console.log('<<<<<<<<<:' + res)
+        this.$Message.success('删除linux配置成功!')
+        this.data.splice(index, 1)
+      }).catch(err => {
+        console.log(err.response)
+        this.$Message.error({
+          content: `测试 ${Object.entries(err.response.data)}`,
+          duration: 10,
+          closable: true
+        })
+      })
     }
   }
 }

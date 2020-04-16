@@ -22,6 +22,7 @@
     "html2canvas": "^1.0.0-alpha.12",
     "iview": "^3.4.0",
     "iview-area": "^1.5.17",
+    "js-base64": "^2.5.2",
     "js-cookie": "^2.2.0",
     "simplemde": "^1.11.2",
     "sortablejs": "^1.7.0",
