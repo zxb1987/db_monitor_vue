@@ -209,7 +209,7 @@ export default {
     },
 
     clear_search () {
-      /* this.$router.go(0) */
+      this.monitoring_name_search = ''
       this.formData.sql_data = ''
       this.headerList = []
       this.bodyInfoList = []
@@ -256,7 +256,7 @@ export default {
     },
     search () {
       console.log(this.monitoring_name_search)
-      this.get_monitoring_config_list(`name=${this.monitoring_name_search}`)
+      if (this.monitoring_name_search.length > 0) { this.get_monitoring_config_list(`name=${this.monitoring_name_search}`) }
     },
     get_monitoring_config_list (parameter) {
       getMonitoringConfig(parameter).then(res => {
