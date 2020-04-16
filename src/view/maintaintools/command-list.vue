@@ -535,6 +535,7 @@ export default {
     sshshowmodel (index) {
       // document.getElementById('ssh_result').innerHTML = "";
       this.ssh = true // 模态框弹出
+      this.ssh_results = ''
       this.getsshid = this.data[index].id
       console.log(this.getsshid)
       this.handleSubmitssh(name)
