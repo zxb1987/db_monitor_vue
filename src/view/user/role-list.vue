@@ -139,7 +139,7 @@
 <script>
 import { createRole, getRoleList, updateRole, deleteRole } from '@/api/role'
 import { formatDate, hasOneOf } from '@/libs/tools'
-// import { Tag } from 'iview'
+import { Tag } from 'iview' // 状态必须的标签选择项
 
 export default {
   data () {
@@ -304,6 +304,7 @@ export default {
       count: 0,
       startRow: 1,
       page_size: 10,
+      // filterMethod:'',
       role_name_search: '',
       create: false,
       showfooter: true,
@@ -328,9 +329,9 @@ export default {
         role_code: [
           { required: true, message: '此项目必填', trigger: 'blur' }
         ],
-        // role_status: [
-        //   {required: true, message: '此项目必填', trigger: 'blur'}
-        // ],
+        role_status: [
+          { required: true, message: '此项目必填', trigger: 'blur' }
+        ],
         role_remark: [
           { required: true, message: '此项目必填', trigger: 'blur' }
         ]
@@ -386,8 +387,6 @@ export default {
 
     page_change (parameter) {
       this.page_size = parameter
-      // console.log(parameter)
-      // console.log(this.get_role_list(parameter))
       this.get_role_list(`page=${parameter}`)
     },
 
@@ -405,7 +404,6 @@ export default {
     },
     handleSubmit (name) {
       this.$refs[name].validate((valid) => {
-        // console.log()
         if (valid) {
           if (!this.updateId) {
             createRole(this.formData).then(res => {
