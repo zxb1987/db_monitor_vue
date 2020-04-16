@@ -130,8 +130,7 @@
             </div>
             <div
               style="background-color: #000c17;font-size: small;color: #00FF00;height: 400px;margin: auto 30px ;content: initial;overflow-y: scroll;white-space: pre-wrap"
-              id="ssh_result" >
-<!--              v-for="item in ssh_results" :value="item" :key="item.tags" :label="item.tags"-->
+              id="ssh_result">
               {{ssh_results}}
 
             </div>
@@ -153,7 +152,6 @@ import {
   deleteCommandList
 } from '@/api/maintaintools'
 import { hasOneOf, formatDate } from '@/libs/tools'
-// import { Tag } from 'iview'
 
 export default {
   data () {
@@ -373,7 +371,6 @@ export default {
       this.$refs.selection.selectAll(status)
     },
     ok_ssh () {
-      // console.log(this.linux_tags_val)
       this.$Message.info('确认操作')
     },
     cancel_ssh () {
@@ -469,7 +466,6 @@ export default {
     },
 
     add () {
-      // this.get_linux_list()
       this.create = true
       this.showfooter = true
       this.close = false
@@ -524,7 +520,6 @@ export default {
           obj.sshport = val[i].sshport
           sshparm.push(obj)
         }
-        // sshparm.push(this.getsshid)
       }
       console.log('这是获取前端取到的linux链接数据')
       console.log(sshparm)
@@ -532,9 +527,7 @@ export default {
       return sshparm
     },
     // 获取选中的命令数据
-
     sshshowmodel (index) {
-      // document.getElementById('ssh_result').innerHTML = "";
       this.ssh = true // 模态框弹出
       this.ssh_results = ''// 点击模态框弹出前清空当前显示值
       this.getsshid = this.data[index].id
