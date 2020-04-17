@@ -4,7 +4,6 @@
         :rules="ruleValidate"
         ref="formData">
     <row>
-    <!--<Alert show-icon>基础信息</Alert>-->
       <Row>
         <div class="form_one">
           <FormItem label="选择主机"
