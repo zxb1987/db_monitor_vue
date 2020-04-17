@@ -40,17 +40,17 @@
       </Row>
       <Row>
         <br>
-<!--        数据分页-->
+        <!--        数据分页-->
         <Page
-              size="small"
-              :total="count"
-              :current="startRow"
-              :page_size="page_size"
-              @on-change="get_role_parameter"
-              @on-page-size-change="page_change"
-              show-elevator
-              show-sizer
-              show-total/>
+          size="small"
+          :total="count"
+          :current="startRow"
+          :page_size="page_size"
+          @on-change="get_role_parameter"
+          @on-page-size-change="page_change"
+          show-elevator
+          show-sizer
+          show-total/>
       </Row>
       <Row>
         <Drawer title="角色信息"
@@ -139,7 +139,7 @@
 <script>
 import { createRole, getRoleList, updateRole, deleteRole } from '@/api/role'
 import { formatDate, hasOneOf } from '@/libs/tools'
-// import { Tag } from 'iview'
+import { Tag } from 'iview' // 状态必须的标签选择项
 
 export default {
   data () {
@@ -304,6 +304,7 @@ export default {
       count: 0,
       startRow: 1,
       page_size: 10,
+      // filterMethod:'',
       role_name_search: '',
       create: false,
       showfooter: true,
@@ -328,9 +329,9 @@ export default {
         role_code: [
           { required: true, message: '此项目必填', trigger: 'blur' }
         ],
-        // role_status: [
-        //   {required: true, message: '此项目必填', trigger: 'blur'}
-        // ],
+        role_status: [
+          { required: true, message: '此项目必填', trigger: 'blur' }
+        ],
         role_remark: [
           { required: true, message: '此项目必填', trigger: 'blur' }
         ]
@@ -368,7 +369,7 @@ export default {
     },
     search () {
       console.log(this.role_name_search)
-      this.get_role_list(`role_name=${this.role_name_search}`)
+      this.get_role_list(`role_name=${this.role_name_search}` && `role_code=${this.role_name_search}` && `role_remark=${this.role_name_search}`)
     },
     clear_search () {
       this.role_name_search = ''
@@ -386,8 +387,6 @@ export default {
 
     page_change (parameter) {
       this.page_size = parameter
-      // console.log(parameter)
-      // console.log(this.get_role_list(parameter))
       this.get_role_list(`page=${parameter}`)
     },
 
@@ -405,7 +404,6 @@ export default {
     },
     handleSubmit (name) {
       this.$refs[name].validate((valid) => {
-        // console.log()
         if (valid) {
           if (!this.updateId) {
             createRole(this.formData).then(res => {

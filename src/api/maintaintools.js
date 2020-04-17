@@ -36,3 +36,12 @@ export const deleteCommandList = id => {
     method: 'delete'
   })
 }
+
+export const exec_command = (id, data) => {
+  return axios.request({
+    // url: '/maintaintools/sshclient/',
+    url: `/maintaintools/sshclient/${id}`,
+    data: data,
+    method: 'post'
+  })
+}

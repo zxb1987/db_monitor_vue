@@ -48,7 +48,7 @@ export const initRouter = () => {
 export const dynamicRouterAdd = () => {
   let dynamicRouter = []
   let data = localRead('dynamicRouter')
-  console.log('从本地加载出来', data)
+  // console.log('从本地加载出来', data)
   if (!data) {
     return dynamicRouter
   }
