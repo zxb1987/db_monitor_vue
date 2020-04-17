@@ -5,11 +5,25 @@
         ref="formData">
     <row>
     <!--<Alert show-icon>基础信息</Alert>-->
+      <Row>
+        <div class="form_one">
+          <FormItem label="选择主机"
+                    label-position="top"
+                    prop="type" style="margin-bottom: 0px">
+            <Select placeholder=""
+                    v-model="formData.master">
+              <Option value='1'>192.1681.1.110</Option>
+              <Option value='2'>10.0.0.35</Option>
+            </Select>
+          </FormItem>
+        </div>
+      </Row>
+
     <Row>
-      <div class="form_one">
+      <div class="form_two">
          <FormItem label="SQL类型"
                   label-position="top"
-                  prop="type">
+                  prop="type" style="margin-bottom: 0px">
           <Select placeholder=""
                   v-model="formData.type">
             <Option value='1'>Oracle</Option>
@@ -24,10 +38,10 @@
       </row>
 
       <row span="8">
-        <div class="form_two">
+        <div class="form_three">
         <FormItem label="数据库实例"
                   label-position="top"
-                  prop="database">
+                  prop="database" style="margin-bottom: 0px">
           <Select placeholder=""
                   v-model="formData.database">
             <Option value='1'>db_monitor</Option>
@@ -38,10 +52,10 @@
       </row>
 
       <row span="9">
-        <div class="form_three">
+        <div class="form_fourth">
         <FormItem label="查看表结构"
                   label-position="top"
-                  prop="databasetables">
+                  prop="databasetables" style="margin-bottom: 0px">
           <Select placeholder=""
                   v-model="formData.databasetables">
             <Option value='1'>db_monitor</Option>
@@ -107,9 +121,13 @@ export default {
         type: '',
         databasetables: '',
         database: '',
-        rowsnumber: ''
+        rowsnumber: '',
+        master: ''
       },
       ruleValidate: {
+        master: [
+          { required: true, message: '此项目必填', trigger: 'blur' }
+        ],
         type: [
           { required: true, message: '此项目必填', trigger: 'blur' }
         ],
@@ -126,10 +144,12 @@ export default {
 </script>
 
 <style scoped>
-  .form_one ,.form_two,.form_three{
-    width: 50%;
+  .form_one ,.form_two,.form_three,.form_fourth{
+    width: 35%;
     /*float: right;*/
-    margin: 0 auto;
+    /*margin: 0 auto;*/
     /*margin-right: 10px;*/
+    margin-top: 10px;
+    margin-left: 30px;
   }
 </style>
