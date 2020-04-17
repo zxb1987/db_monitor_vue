@@ -304,7 +304,6 @@ export default {
       count: 0,
       startRow: 1,
       page_size: 10,
-      // filterMethod:'',
       role_name_search: '',
       create: false,
       showfooter: true,
@@ -386,16 +385,20 @@ export default {
     },
 
     page_change (parameter) {
+      debugger
       this.page_size = parameter
-      this.get_role_list(`page=${parameter}`)
+      console.log(parameter)
+      if (this.page_size >= this.count) {
+        this.get_role_list(`page=${parameter}`)
+      }
     },
 
     // 分页选择多少页
-    // get_role_parameter (parameter) {
-    //   console.log(parameter)
-    //   this.showfooter = parameter
-    //   if (this.page_size = this.count) { this.get_role_list(`page=${parameter}`) }
-    // },
+    get_role_parameter (parameter) {
+      console.log(parameter)
+      this.showfooter = parameter
+      this.get_role_list(`page=${parameter}`)
+    },
 
     view (index) {
       this.update(index)
@@ -446,7 +449,6 @@ export default {
       this.showfooter = true
       this.close = false
       this.updateId = null
-
       this.formData.role_name = ''
       this.formData.role_code = ''
       this.formData.role_status = ''
@@ -490,9 +492,22 @@ export default {
         })
       } else if (type === 3) {
         this.$refs.table.exportCsv({
-          filename: '自定义数据',
-          columns: this.columns.filter((col, index) => index < 4),
-          data: this.get_role_list().filter((data, index) => index < 4)
+          filename: '自定义数据', // 两种方式取值
+          // columns: this.columns.filter((col, index) => index < 4),
+          // data: this.data.filter((data, index) => index < 4)
+          // 第二种方式取值导出
+          columns: this.columns.filter((col, index) => { // 导出数据过滤
+            if (index > 0 && index < this.columns.length - 1) {
+              return true
+            }
+          }),
+          data: this.data.map((v, index) =>
+            ({ ...v,
+              lineIndex: index + 1,
+              role_status: v.role_status.name
+            })
+          )
+
         })
       }
     }
