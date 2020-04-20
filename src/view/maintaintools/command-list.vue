@@ -523,7 +523,6 @@ export default {
       }
       console.log('这是获取前端取到的linux链接数据')
       console.log(sshparm)
-
       return sshparm
     },
     // 获取选中的命令数据
