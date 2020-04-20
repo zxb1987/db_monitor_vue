@@ -513,6 +513,7 @@ export default {
       if (val.length > 0) {
         for (let i in val) {
           obj = {}
+          obj.tags = val[i].tags
           obj.host = val[i].host
           obj.user = val[i].user
           obj.password = val[i].password
