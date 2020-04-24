@@ -45,7 +45,6 @@
                   prop="database" style="margin-bottom: 0px">
           <Select placeholder="请选择数据库"
                   v-model="formValisshdate.databases_list" @on-change="indexselect">
-            <!--<Option v-for="base in databases" :value="base" :key="base">{{base}}</Option>-->
             <Option v-for="(dbase,index) in databases" :key="index" :value="dbase.base" >{{dbase.base}}</Option>
           </Select>
 
@@ -53,7 +52,7 @@
                     label-position="top"
                     prop="databasetables" style="margin-bottom: 0px">
           <Select placeholder="表结构"
-                  v-model="formValisshdate.databases_tables" @change="selectdbtables">
+                  v-model="formValisshdate.databases_tables">
             <!--            <Option v-for="(tab,index) in formValisshdate.databases_list" :key="index" :value="tab.tables" >{{tab.tables}}</Option>-->
             <Option v-for="(tabs,index) in datatables" :key="index" :value="tabs" >{{tabs}}</Option>
           </Select>
@@ -107,6 +106,7 @@ export default {
         linux_tags_val: [],
         databases_list: [],
         databases_tables: [],
+        base: '',
         host: '',
         sshport: '',
         user: '',
@@ -153,24 +153,22 @@ export default {
       }
       console.log(linux_data_msgs)
       logintoserver(linux_data_msgs).then(res => {
-        this.databases = []
-        console.log(res.data)
-        this.databases = res.data
-        console.log(res.data.base)
-        /* for (let i in res.data){
-                    this.databases.push(res.data[i].base)
-                } */
+        if (res.data.length != null) {
+          this.databases = []
+          console.log(res.data)
+          this.databases = res.data
+        }
       }).catch(err => {
         this.$Message.error(`登录错误!! ${err}`)
       })
     },
     indexselect (event) {
-      console.log('111')
-      console.log(this.formValisshdate.databases_list)
-      console.log(this.databases.length)
-      console.log(this.databases[0].base)
+      this.formValisshdate.databases_tables = ''
+      this.datatables = []
       for (let k = 0; k <= this.databases.length; k++) {
-        if (this.formValisshdate.databases_list === this.databases[k].base) { this.datatables = this.databases[k].table }
+        if (this.formValisshdate.databases_list === this.databases[k].base) {
+          this.datatables = this.databases[k].tables
+        }
       }
     },
     selectdbtables () {
