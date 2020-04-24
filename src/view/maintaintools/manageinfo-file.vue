@@ -265,22 +265,22 @@ export default {
       })
     },
 
-    uploadSucess (response, file) { // 上传成功钩子
-      // console.log('3333333333')
-      // console.log(this.file)
-      if (response.msg === '上传成功') {
-        this.$Message.success('导入成功')
-      } else {
-        this.$Message.error(response.msg)
-      }
-      file.url = response.data.actionUrl
-      console.log(response.data.actionUrl)
-      this.files = null
-      this.fileName = ''
-    },
-    uploadError () { // 失败
-      this.$Message.error('导入失败')
-    },
+    // uploadSucess (response, file) { // 上传成功钩子
+    //   // console.log('3333333333')
+    //   // console.log(this.file)
+    //   if (response.msg === '上传成功') {
+    //     this.$Message.success('导入成功')
+    //   } else {
+    //     this.$Message.error(response.msg)
+    //   }
+    //   file.url = response.data.actionUrl
+    //   console.log(response.data.actionUrl)
+    //   this.files = null
+    //   this.fileName = ''
+    // },
+    // uploadError () { // 失败
+    //   this.$Message.error('导入失败')
+    // },
     // handleUpload (file) {
     //   upload_file(this.formValfile, this.file).then(res => {
     //     this.resultdate = res.data.result
@@ -291,7 +291,7 @@ export default {
     //   this.file = file
     //   return false
     // },
-
+    //
     handleUpload (file) {
       console.log('00000000000000this.formValfile')
       upload_file(this.formValfile, this.file).then(res => {
@@ -304,11 +304,11 @@ export default {
       this.file = file
       return false
     },
-    upload () {
-      this.loadingStatus = true
-      console.log(this.$refs.upload.post(this.file))
-      this.$refs.upload.post(this.file)
-    },
+    // upload () {
+    //   this.loadingStatus = true
+    //   console.log(this.$refs.upload.post(this.file))
+    //   this.$refs.upload.post(this.file)
+    // },
 
     // 表格的相关操作
     // 全选按钮操作实现

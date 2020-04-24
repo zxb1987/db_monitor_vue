@@ -18,19 +18,11 @@
             </Select>
           </FormItem>
         </Form>
-        <!--        开始进行拖拽上传-->
-
-<!--        :on-success="uploadSucess"-->
-<!--        :on-error="uploadError"-->
-<!--        :loading="loadingStatus"-->
-<!--        :action="actionUrl"-->
-<!--        :show-upload-list="true"-->
-<!--        :show-file-list="false"-->
         <Upload
           multiple
           ref="upload"
           type="drag"
-          :before-upload="handleUpload"
+          :before-upload="handleUploads"
           class="uploadfile">
           <div style="width: 50%;height:80%; margin: auto ;">
             <Icon type="ios-cloud-upload" style="color: #3399ff;" size="130" ></Icon>
@@ -45,7 +37,7 @@
 </template>
 
 <script>
-import { getLinuxList } from '@/api/maintaintools'
+import { getLinuxList, upload_fileall } from '@/api/maintaintools'
 
 export default {
   // name: 'maintaintools-file',
@@ -57,16 +49,21 @@ export default {
       actionUrl: this.$config.upload,
       file: null,
       fileName: '',
+      fileSize: '',
       loadingStatus: false,
       resultdate: '',
-      uploadFile: []
+      uploadFile: [],
+      get_linux_tags: []
 
     }
   },
 
   // vue生命周期，打开页面就加载的数据放在这里
-
+  created () {
+    this.get_linux_list()
+  },
   methods: {
+
     // 获取主机信息
     get_linux_list (parameter) {
       getLinuxList(parameter).then(res => {
@@ -75,78 +72,20 @@ export default {
         this.$Message.error(`获取Linux主机资源信息错误 ${err}`)
       })
     },
-    created () {
-      this.get_linux_list()
-    },
 
-    // uploadSucess (response, file) { // 上传成功钩子
-    //   // console.log('3333333333')
-    //   // console.log(this.file)
-    //   if (response.msg === '上传成功') {
-    //     this.$Message.success('导入成功')
-    //   } else {
-    //     this.$Message.error(response.msg)
-    //   }
-    //   file.url = response.data.actionUrl
-    //   console.log(response.data.actionUrl)
-    //   this.files = null
-    //   this.fileName = ''
-    // },
-    // uploadError () { // 失败
-    //   this.$Message.error('导入失败')
-    // },
-    // handleUpload (file) {
-    //   upload_file(this.formsshtags,this.file).then(res=>{
-    //     this.resultdate=res.data.result
-    //     this.$Message.success('上传成功',)
-    //   }).catch(err => {
-    //     this.$Message.error(`上传错误 ${err}`)
-    //   })
-    //   this.file = file;
-    //   return false;
-    // },
-
-    handleUpload (file) {
-      // console.log('00000000000000this.formsshtags')
-      // console.log(file)
-      // for (let i in file) {
-      //   console.log('...............................................')
-      //   console.log(i)
-      //   this.fileName = i.name
-      // }
-      // this.file = file
-      // this.fileName = file.name
-      // //截取文件名
-      // let pointPos = this.fileName.indexOf('.');
-      // this.fileName = this.fileName.substring(0, pointPos);
-      // console.log(this.filename)
-      return new Promise((resolve, reject) => {
-        let fileName = file.name
-        // 截取文件名
-        let pointPos = fileName.indexOf('.')
-        this.fileName = fileName.substring(0, pointPos)
-        console.log(this.filename)
-        return resolve(true)
+    handleUploads (file) {
+      console.log('22222222222222222222222222')
+      this.file = file
+      this.filename = file.name
+      this.fileSize = (file.size / 1024).toFixed(2) + 'k'
+      // upload_fileall(this.formsshtags,this.file).then(res =>{
+      //   this.resultdate=res.data.result
+      // })
+      upload_fileall(this.file).then(res => {
+        this.resultdate = res.data.result
       })
+      console.log(this.resultdate)
     }
-
-    // handleUpload (res, file) {
-    //   console.log('00000000000000this.formsshtags')
-    //   upload_fileall(this.formsshtags).then(res => {
-    //     this.resultdate = res.data.result
-    //     this.$Message.success('上传成功')
-    //     console.log('111111111111111')
-    //   }).catch(err => {
-    //     this.$Message.error(`上传错误 ${err}`)
-    //   })
-    //   this.file = file
-    //   return false
-    // },
-    // upload () {
-    //   this.loadingStatus = true
-    //   console.log(this.$refs.upload.post(this.file))
-    //   this.$refs.upload.post(this.file)
-    // },
 
   }
 }
