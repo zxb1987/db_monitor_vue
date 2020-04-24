@@ -1,135 +1,203 @@
 <template>
-  <div>
+  <div style="background: #f8f8f9;height: 320px">
   <Form :model="formData"
         :rules="ruleValidate"
         ref="formData">
     <row>
-    <!--<Alert show-icon>基础信息</Alert>-->
-    <Row>
-      <div class="form_one">
-         <FormItem label="SQL类型"
-                  label-position="top"
-                  prop="type">
-          <Select placeholder=""
-                  v-model="formData.type">
-            <Option value='1'>Oracle</Option>
-            <Option value='2'>MySQL</Option>
-            <Option value='3'>MariaDB</Option>
-            <Option value='4'>PostgreSQL</Option>
-            <Option value='5'>SQL Server</Option>
-            <Option value='6'>Redis</Option>
-          </Select>
-        </FormItem>
-      </div>
-      </row>
-
-      <row span="8">
+      <Row>
+        <div class="form_one">
+            <FormItem label="选择主机"
+                      label-position="top"
+                      prop="host"
+                      style="margin-bottom: 0px">
+              <Select placeholder="请选择主机"
+                v-model="formValisshdate.host">
+                <Option v-for="item in linuxdata" v-bind:value="item.host" :key="item.host" :label="item.host"></Option>
+              </Select>
+            </FormItem>
+        </div>
+        <div class="form_five">
+          <Button type="primary" @click="handleSubmitssh()">连接主机</Button>
+          <!--<Button @click="handleReset('formValisshdate')" style="margin-left: 8px">重置</Button>-->
+        </div>
+      </Row>
+      <!--<Row>
         <div class="form_two">
-        <FormItem label="数据库实例"
+           <FormItem label="SQL类型"
+                    label-position="top"
+                    prop="databasetype" style="margin-bottom: 0px">
+            <Select placeholder="请选择数据库类型"
+                    v-model="formData.databasetype">
+              <Option value='1'>Oracle</Option>
+              <Option value='2'>MySQL</Option>
+              <Option value='3'>MariaDB</Option>
+              <Option value='4'>PostgreSQL</Option>
+              <Option value='5'>SQL Server</Option>
+              <Option value='6'>Redis</Option>
+            </Select>
+          </FormItem>
+        </div>
+        </row>-->
+      <row span="8">
+        <div class="form_three">
+        <FormItem label="数据库"
                   label-position="top"
-                  prop="database">
-          <Select placeholder=""
-                  v-model="formData.database">
-            <Option value='1'>db_monitor</Option>
-            <Option value='2'>MySQL</Option>
+                  prop="database" style="margin-bottom: 0px">
+          <Select placeholder="请选择数据库"
+                  v-model="formValisshdate.databases_list" @on-change="indexselect">
+            <Option v-for="(dbase,index) in databases" :key="index" :value="dbase.base" >{{dbase.base}}</Option>
           </Select>
+
+          <FormItem label="查看表结构"
+                    label-position="top"
+                    prop="databasetables" style="margin-bottom: 0px">
+          <Select placeholder="表结构"
+                  v-model="formValisshdate.databases_tables">
+            <!--            <Option v-for="(tab,index) in formValisshdate.databases_list" :key="index" :value="tab.tables" >{{tab.tables}}</Option>-->
+            <Option v-for="(tabs,index) in datatables" :key="index" :value="tabs" >{{tabs}}</Option>
+          </Select>
+          </FormItem>
         </FormItem>
         </div>
       </row>
 
-      <row span="9">
-        <div class="form_three">
+    <!--  <row span="9">
+        <div class="form_fourth">
         <FormItem label="查看表结构"
                   label-position="top"
-                  prop="databasetables">
-          <Select placeholder=""
-                  v-model="formData.databasetables">
-            <Option value='1'>db_monitor</Option>
-            <Option value='2'>MySQL</Option>
+                  prop="databasetables" style="margin-bottom: 0px">
+          <Select placeholder="表结构"
+                  v-model="formValisshdate.databases_tables">
+&lt;!&ndash;            <Option v-for="(tab,index) in formValisshdate.databases_list" :key="index" :value="tab.tables" >{{tab.tables}}</Option>&ndash;&gt;
+            <Option v-for=" tabs in selection" :value="tabs.tables" >{{tabs.tables}}</Option>
+            &lt;!&ndash;<Option value='1'>db_monitor</Option>
+            <Option value='2'>MySQL</Option>&ndash;&gt;
           </Select>
         </FormItem>
         </div>
-      </row>
-      <!--<Col span="10">
-        <FormItem label="SQL返回行数"
-                  label-position="top"
-                  prop="rowsnumber">
-          <Input placeholder="请输入SQL返回行数"
-                 v-model="formData.rowsnumber">
-          </Input>
-        </FormItem>
-      </Col>-->
+      </row>-->
     </Row>
   </Form>
   </div>
 </template>
 
 <script>
+import { getLinuxList, logintoserver } from '@/api/assets'
 export default {
   name: 'monitoringOptionsList',
   data () {
     return {
-      columns: [
-        {
-          type: 'index',
-          width: 60,
-          align: 'center',
-          sortable: true
-        },
-        {
-          title: 'SQL类型',
-          key: 'type',
-          width: 160,
-          render: (h, params) => {
-            const typeMap = {
-              1: { desc: 'Oracle数据库' },
-              2: { desc: 'MySQL数据库' },
-              3: { desc: 'MariaDB' },
-              4: { desc: 'PostgreSQL' },
-              5: { desc: 'SQL Server' },
-              6: { desc: 'Redis' }
-            }
-            const type = params.row.type
-            return h('div', typeMap[type]['desc'])
-          }
-        }
-      ],
+      columns: [],
       data: [],
+      linuxdata: [],
+      databases: [],
+      datatables: [],
+      indexNum: 0,
       create: false,
-      styles: {
-        height: 'calc(100% - 55px)',
-        overflow: 'auto',
-        paddingBottom: '53px',
-        position: 'static'
-      },
       updateId: null,
       formData: {
-        type: '',
+        databasetype: '',
         databasetables: '',
         database: '',
-        rowsnumber: ''
+        rowsnumber: '',
+        master: ''
+      },
+      formValisshdate: {
+        linux_tags_val: [],
+        databases_list: [],
+        databases_tables: [],
+        base: '',
+        host: '',
+        sshport: '',
+        user: '',
+        password: ''
       },
       ruleValidate: {
-        type: [
+        host: [
           { required: true, message: '此项目必填', trigger: 'blur' }
+        ],
+        /* master: [
+              { required: true, message: '此项目必填', trigger: 'blur' }
+            ], */
+        databasetype: [
+          { required: false, message: '此项目必填', trigger: 'blur' }
         ],
         databasetables: [
-          { required: true, message: '此项目必填', trigger: 'blur' }
+          { required: false, message: '此项目必填', trigger: 'blur' }
         ],
         database: [
-          { required: true, message: '此项目必填', trigger: 'blur' }
+          { required: false, message: '此项目必填', trigger: 'blur' }
         ]
       }
+    }
+  },
+  created () {
+    this.getalllinuxlist()
+  },
+  computed: {},
+  components: {},
+  methods: {
+    // 登录SSH
+    handleSubmitssh: function () {
+      console.log('IP端口' + this.formValisshdate.host)
+      let linux_data_msgs = []
+      for (let i in this.linuxdata) {
+        if (this.formValisshdate.host === this.linuxdata[i].host) {
+          let obj = {}
+          obj.host = this.formValisshdate.host
+          obj.user = this.linuxdata[i].user
+          obj.password = this.linuxdata[i].password
+          obj.sshport = this.linuxdata[i].sshport
+          linux_data_msgs.push(obj)
+        }
+      }
+      console.log(linux_data_msgs)
+      logintoserver(linux_data_msgs).then(res => {
+        if (res.data.length != null) {
+          this.databases = []
+          console.log(res.data)
+          this.databases = res.data
+        }
+      }).catch(err => {
+        this.$Message.error(`登录错误!! ${err}`)
+      })
+    },
+    indexselect (event) {
+      this.formValisshdate.databases_tables = ''
+      this.datatables = []
+      for (let k = 0; k <= this.databases.length; k++) {
+        if (this.formValisshdate.databases_list === this.databases[k].base) {
+          this.datatables = this.databases[k].tables
+        }
+      }
+    },
+    selectdbtables () {
+      console.log('22222')
+    },
+    getalllinuxlist (event) {
+      getLinuxList().then(res => {
+        console.log(res.data.results)
+        this.linuxdata = res.data.results
+      }).catch(err => {
+        this.$Message.error(`获取主机信息错误!! ${err}`)
+      })
     }
   }
 }
 </script>
 
 <style scoped>
-  .form_one ,.form_two,.form_three{
-    width: 50%;
-    /*float: right;*/
-    margin: 0 auto;
-    /*margin-right: 10px;*/
+  .form_one ,.form_two,.form_three,.form_fourth{
+    width: 25%;
+    float: left;
+    /*margin: 0 auto;*/
+    margin-left: 80px;
+    margin-top: 10px;
+    /*margin-left: 30px;*/
+  }
+  .form_five{
+    position: absolute;
+    margin-left: 300px;
+    margin-top: 43px;
   }
 </style>
