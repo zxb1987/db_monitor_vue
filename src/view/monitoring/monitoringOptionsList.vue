@@ -48,34 +48,22 @@
             <Option v-for="(dbase,index) in databases" :key="index" :value="dbase.basedb" >{{dbase.basedb}}</Option>
           </Select>
 
-          <FormItem label="查看表结构"
-                    label-position="top"
-                    prop="databasetables" style="margin-bottom: 0px">
-          <Select placeholder="表结构"
-                  v-model="formValisshdate.databases_tables">
-            <!--            <Option v-for="(tab,index) in formValisshdate.databases_list" :key="index" :value="tab.tables" >{{tab.tables}}</Option>-->
-            <Option v-for="(tabs,index) in datatables" :key="index" :value="tabs" >{{tabs}}</Option>
-          </Select>
-          </FormItem>
         </FormItem>
         </div>
       </row>
 
-    <!--  <row span="9">
+      <row span="9">
         <div class="form_fourth">
-        <FormItem label="查看表结构"
-                  label-position="top"
-                  prop="databasetables" style="margin-bottom: 0px">
-          <Select placeholder="表结构"
-                  v-model="formValisshdate.databases_tables">
-&lt;!&ndash;            <Option v-for="(tab,index) in formValisshdate.databases_list" :key="index" :value="tab.tables" >{{tab.tables}}</Option>&ndash;&gt;
-            <Option v-for=" tabs in selection" :value="tabs.tables" >{{tabs.tables}}</Option>
-            &lt;!&ndash;<Option value='1'>db_monitor</Option>
-            <Option value='2'>MySQL</Option>&ndash;&gt;
-          </Select>
-        </FormItem>
+          <FormItem label="查看表结构"
+                    label-position="top"
+                    prop="databasetables" style="margin-bottom: 0px">
+            <Select placeholder="表结构"
+                    v-model="formValisshdate.databases_tables">
+              <Option v-for="(tabs,index) in datatables" :key="index" :value="tabs" >{{tabs}}</Option>
+            </Select>
+          </FormItem>
         </div>
-      </row>-->
+      </row>
     </Row>
   </Form>
   </div>
@@ -125,7 +113,7 @@ export default {
           { required: false, message: '此项目必填', trigger: 'blur' }
         ],
         database: [
-          { required: false, message: '此项目必填', trigger: 'blur' }
+          { required: true, message: '此项目必填', trigger: 'blur' }
         ]
       }
     }
