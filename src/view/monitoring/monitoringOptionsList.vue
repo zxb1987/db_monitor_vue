@@ -45,7 +45,7 @@
                   prop="database" style="margin-bottom: 0px">
           <Select placeholder="请选择数据库"
                   v-model="formValisshdate.databases_list" @on-change="indexselect">
-            <Option v-for="(dbase,index) in databases" :key="index" :value="dbase.base" >{{dbase.base}}</Option>
+            <Option v-for="(dbase,index) in databases" :key="index" :value="dbase.basedb" >{{dbase.basedb}}</Option>
           </Select>
 
           <FormItem label="查看表结构"
@@ -106,7 +106,6 @@ export default {
         linux_tags_val: [],
         databases_list: [],
         databases_tables: [],
-        base: '',
         host: '',
         sshport: '',
         user: '',
@@ -137,6 +136,14 @@ export default {
   computed: {},
   components: {},
   methods: {
+    getalllinuxlist (event) {
+      getLinuxList().then(res => {
+        console.log(res.data.results)
+        this.linuxdata = res.data.results
+      }).catch(err => {
+        this.$Message.error(`获取主机信息错误!! ${err}`)
+      })
+    },
     // 登录SSH
     handleSubmitssh: function () {
       console.log('IP端口' + this.formValisshdate.host)
@@ -165,22 +172,12 @@ export default {
     indexselect (event) {
       this.formValisshdate.databases_tables = ''
       this.datatables = []
+      console.log(this.databases[0])
       for (let k = 0; k <= this.databases.length; k++) {
-        if (this.formValisshdate.databases_list === this.databases[k].base) {
-          this.datatables = this.databases[k].tables
+        if (this.formValisshdate.databases_list === this.databases[k]['basedb']) {
+          this.datatables = this.databases[k]['tables']
         }
       }
-    },
-    selectdbtables () {
-      console.log('22222')
-    },
-    getalllinuxlist (event) {
-      getLinuxList().then(res => {
-        console.log(res.data.results)
-        this.linuxdata = res.data.results
-      }).catch(err => {
-        this.$Message.error(`获取主机信息错误!! ${err}`)
-      })
     }
   }
 }
