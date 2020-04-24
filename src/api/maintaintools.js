@@ -44,3 +44,30 @@ export const exec_command = (id, data) => {
     method: 'post'
   })
 }
+export const getUploadDownFileList = parameter => {
+  return axios.request({
+    url: `/maintaintools/api/uploaddownfile-list?${parameter}`,
+    method: 'get'
+  })
+}
+// export const upload_file = (id, data) => {
+//   return axios.request({
+//     url: `/maintaintools/uploadfile/${id}`,
+//     data: data,
+//     method: 'post'
+//   })
+// }
+export const upload_file = parameter => {
+  return axios.request({
+    url: `/maintaintools/uploadfile/${parameter}`,
+    method: 'post'
+  })
+}
+
+export const upload_fileall = date => {
+  return axios.request({
+    url: '/maintaintools/uploadfile/file',
+    data: date,
+    method: 'post'
+  })
+}
