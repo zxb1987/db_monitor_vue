@@ -127,6 +127,14 @@ export const mysqlExecute = data => {
     method: 'post'
   })
 }
+// 登录SSH
+export const logintoserver = data => {
+  return axios.request({
+    url: '/mysql/api/monitoringOptionList',
+    data: data,
+    method: 'post'
+  })
+}
 
 export const getTestPUT = (id, data) => {
   return axios.request({

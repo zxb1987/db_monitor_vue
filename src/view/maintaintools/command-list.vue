@@ -132,7 +132,7 @@
               style="background-color: #000c17;font-size: small;color: #00FF00;height: 400px;margin: auto 30px ;content: initial;overflow-y: scroll;white-space: pre-wrap"
               id="ssh_result">
               {{ssh_results}}
-
+<!--          接收后台返回数据-->
             </div>
           </Modal>
 
@@ -513,6 +513,7 @@ export default {
       if (val.length > 0) {
         for (let i in val) {
           obj = {}
+          obj.tags = val[i].tags
           obj.host = val[i].host
           obj.user = val[i].user
           obj.password = val[i].password
@@ -522,7 +523,6 @@ export default {
       }
       console.log('这是获取前端取到的linux链接数据')
       console.log(sshparm)
-
       return sshparm
     },
     // 获取选中的命令数据
