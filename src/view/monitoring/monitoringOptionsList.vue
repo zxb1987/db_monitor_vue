@@ -45,37 +45,25 @@
                   prop="database" style="margin-bottom: 0px">
           <Select placeholder="请选择数据库"
                   v-model="formValisshdate.databases_list" @on-change="indexselect">
-            <Option v-for="(dbase,index) in databases" :key="index" :value="dbase.base" >{{dbase.base}}</Option>
+            <Option v-for="(dbase,index) in databases" :key="index" :value="dbase.basedb" >{{dbase.basedb}}</Option>
           </Select>
 
-          <FormItem label="查看表结构"
-                    label-position="top"
-                    prop="databasetables" style="margin-bottom: 0px">
-          <Select placeholder="表结构"
-                  v-model="formValisshdate.databases_tables">
-            <!--            <Option v-for="(tab,index) in formValisshdate.databases_list" :key="index" :value="tab.tables" >{{tab.tables}}</Option>-->
-            <Option v-for="(tabs,index) in datatables" :key="index" :value="tabs" >{{tabs}}</Option>
-          </Select>
-          </FormItem>
         </FormItem>
         </div>
       </row>
 
-    <!--  <row span="9">
+      <row span="9">
         <div class="form_fourth">
-        <FormItem label="查看表结构"
-                  label-position="top"
-                  prop="databasetables" style="margin-bottom: 0px">
-          <Select placeholder="表结构"
-                  v-model="formValisshdate.databases_tables">
-&lt;!&ndash;            <Option v-for="(tab,index) in formValisshdate.databases_list" :key="index" :value="tab.tables" >{{tab.tables}}</Option>&ndash;&gt;
-            <Option v-for=" tabs in selection" :value="tabs.tables" >{{tabs.tables}}</Option>
-            &lt;!&ndash;<Option value='1'>db_monitor</Option>
-            <Option value='2'>MySQL</Option>&ndash;&gt;
-          </Select>
-        </FormItem>
+          <FormItem label="查看表结构"
+                    label-position="top"
+                    prop="databasetables" style="margin-bottom: 0px">
+            <Select placeholder="表结构"
+                    v-model="formValisshdate.databases_tables">
+              <Option v-for="(tabs,index) in datatables" :key="index" :value="tabs" >{{tabs}}</Option>
+            </Select>
+          </FormItem>
         </div>
-      </row>-->
+      </row>
     </Row>
   </Form>
   </div>
@@ -106,7 +94,6 @@ export default {
         linux_tags_val: [],
         databases_list: [],
         databases_tables: [],
-        base: '',
         host: '',
         sshport: '',
         user: '',
@@ -126,7 +113,7 @@ export default {
           { required: false, message: '此项目必填', trigger: 'blur' }
         ],
         database: [
-          { required: false, message: '此项目必填', trigger: 'blur' }
+          { required: true, message: '此项目必填', trigger: 'blur' }
         ]
       }
     }
@@ -137,6 +124,14 @@ export default {
   computed: {},
   components: {},
   methods: {
+    getalllinuxlist (event) {
+      getLinuxList().then(res => {
+        console.log(res.data.results)
+        this.linuxdata = res.data.results
+      }).catch(err => {
+        this.$Message.error(`获取主机信息错误!! ${err}`)
+      })
+    },
     // 登录SSH
     handleSubmitssh: function () {
       console.log('IP端口' + this.formValisshdate.host)
@@ -165,22 +160,12 @@ export default {
     indexselect (event) {
       this.formValisshdate.databases_tables = ''
       this.datatables = []
+      console.log(this.databases[0])
       for (let k = 0; k <= this.databases.length; k++) {
-        if (this.formValisshdate.databases_list === this.databases[k].base) {
-          this.datatables = this.databases[k].tables
+        if (this.formValisshdate.databases_list === this.databases[k]['basedb']) {
+          this.datatables = this.databases[k]['tables']
         }
       }
-    },
-    selectdbtables () {
-      console.log('22222')
-    },
-    getalllinuxlist (event) {
-      getLinuxList().then(res => {
-        console.log(res.data.results)
-        this.linuxdata = res.data.results
-      }).catch(err => {
-        this.$Message.error(`获取主机信息错误!! ${err}`)
-      })
     }
   }
 }
