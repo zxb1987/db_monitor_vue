@@ -52,8 +52,8 @@ export default {
   data () {
     return {
       linuxdata: [], // 数据集合
-      formsshtags: [], // 获取选中的服务器数据
-      get_linux_tags: [],
+      formsshtags: {}, // 获取选中的服务器数据
+      get_linux_tags: {},
       filelist: []
     }
   },

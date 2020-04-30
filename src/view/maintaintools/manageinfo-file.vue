@@ -15,7 +15,7 @@
               multiple
               :max-tag-count="1"
               v-model="formValfile" filterable allow-create>
-              <Option v-for="item in linuxdata" :value="item" :key="item.tags" :label="item.tags">{{item.tags}}</Option>
+              <Option v-for="item in linuxdata" :value="item.tags" :key="item.tags" :label="item.tags">{{item.tags}}</Option>
             </Select>
           </FormItem>
         </Form>
@@ -24,7 +24,7 @@
           multiple
           ref="upload"
           type="drag"
-          action=""
+          :action="uploadurl"
           :before-upload="handleUpload"
           :loading="loadingStatus"
           :show-upload-list="true"
@@ -53,18 +53,17 @@
         </row>
         <row class="down">
           <Col class="showdwon">
-            <Upload
-              multiple
-              type="drag"
-              :action="upload"
-              class="uploadfile"
-              :http-request='uploadFileMethod'
-              :show-file-list="false">
-              <div style="width: auto;margin: auto">
-                <Icon type="ios-cloud-upload" size="50" style="color: #3399ff;align-content: center"></Icon>
-                <p>点击或拖拽文件上传</p>
-              </div>
-            </Upload>
+<!--            <Upload-->
+<!--              multiple-->
+<!--              type="drag"-->
+<!--              :action="upload"-->
+<!--              class="uploadfile"-->
+<!--              :show-file-list="false">-->
+<!--              <div style="width: auto;margin: auto">-->
+<!--                <Icon type="ios-cloud-upload" size="50" style="color: #3399ff;align-content: center"></Icon>-->
+<!--                <p>点击或拖拽文件上传</p>-->
+<!--              </div>-->
+<!--            </Upload>-->
           </Col>
         </row>
 
@@ -123,6 +122,7 @@ export default {
       formValfile: [], // 获取选中的服务器数据
       filename_search: '', // 搜索字段
       // uploadHost:'',//上传的地址
+      uploadurl: '',
       actionUrl: '',
       file: null,
       fileName: '',
@@ -306,11 +306,11 @@ export default {
       }
       return false
     },
-    upload () {
-      this.loadingStatus = true
-      console.log(this.$refs.upload.post(this.file))
-      this.$refs.upload.post(this.file)
-    },
+    // upload () {
+    //   this.loadingStatus = true
+    //   console.log(this.$refs.upload.post(this.file))
+    //   this.$refs.upload.post(this.file)
+    // },
 
     // 表格的相关操作
     // 全选按钮操作实现
