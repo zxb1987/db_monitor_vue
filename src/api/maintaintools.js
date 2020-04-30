@@ -50,24 +50,25 @@ export const getUploadDownFileList = parameter => {
     method: 'get'
   })
 }
-// export const upload_file = (id, data) => {
-//   return axios.request({
-//     url: `/maintaintools/uploadfile/${id}`,
-//     data: data,
-//     method: 'post'
-//   })
-// }
-export const upload_file = parameter => {
+
+export const upload_file = date => {
   return axios.request({
-    url: `/maintaintools/uploadfile/${parameter}`,
-    method: 'post'
+    method: 'post',
+    url: `/maintaintools/uploadfile`,
+    data: date,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
   })
 }
 
-export const upload_fileall = date => {
+export const upload_fileall = (date) => {
   return axios.request({
-    url: '/maintaintools/uploadfile/file',
+    method: 'post',
+    url: `/maintaintools/uploadfile/file`,
     data: date,
-    method: 'post'
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
   })
 }
