@@ -8,13 +8,14 @@
           <span style="margin-left: 20px">已选择的：</span>
           <span style="margin-left: 10px" v-for="val in formValfile" :key="val.tags">{{val.tags}}</span>
         </div>
-        <Form ref="formValfile" :model="formValfile" :label-width="80">
+<!--       ref="formValfile" :model="formValfile"-->
+        <Form  :label-width="80">
           <FormItem label="数据列表" prop="get_linux_tags">
             <Select
               multiple
               :max-tag-count="1"
               v-model="formValfile" filterable allow-create>
-              <Option v-for="item in linuxdata" :value="item" :key="item.tags" :label="item.tags">{{item.tags}}</Option>
+              <Option v-for="item in linuxdata" :value="item.tags" :key="item.tags" :label="item.tags">{{item.tags}}</Option>
             </Select>
           </FormItem>
         </Form>
@@ -23,14 +24,14 @@
           multiple
           ref="upload"
           type="drag"
+          :action="uploadurl"
           :before-upload="handleUpload"
           :loading="loadingStatus"
-          :action="actionUrl"
           :show-upload-list="true"
-
           :on-success="uploadSucess"
           :on-error="uploadError"
           :show-file-list="false"
+          paste
           class="uploadfile">
           <div style="width: 50%;height:80%; margin: auto ;">
             <Icon type="ios-cloud-upload" style="color: #3399ff;" size="130" ></Icon>
@@ -52,18 +53,17 @@
         </row>
         <row class="down">
           <Col class="showdwon">
-            <Upload
-              multiple
-              type="drag"
-              :action="upload"
-              class="uploadfile"
-              :http-request='uploadFileMethod'
-              :show-file-list="false">
-              <div style="width: auto;margin: auto">
-                <Icon type="ios-cloud-upload" size="50" style="color: #3399ff;align-content: center"></Icon>
-                <p>点击或拖拽文件上传</p>
-              </div>
-            </Upload>
+<!--            <Upload-->
+<!--              multiple-->
+<!--              type="drag"-->
+<!--              :action="upload"-->
+<!--              class="uploadfile"-->
+<!--              :show-file-list="false">-->
+<!--              <div style="width: auto;margin: auto">-->
+<!--                <Icon type="ios-cloud-upload" size="50" style="color: #3399ff;align-content: center"></Icon>-->
+<!--                <p>点击或拖拽文件上传</p>-->
+<!--              </div>-->
+<!--            </Upload>-->
           </Col>
         </row>
 
@@ -122,7 +122,8 @@ export default {
       formValfile: [], // 获取选中的服务器数据
       filename_search: '', // 搜索字段
       // uploadHost:'',//上传的地址
-      actionUrl: this.$config.upload,
+      uploadurl: '',
+      actionUrl: '',
       file: null,
       fileName: '',
       loadingStatus: false,
@@ -161,13 +162,12 @@ export default {
           key: 'file_path',
           width: 200
         },
-        // {
-        //   title: '文件传输类型',
-        //   key: 'file_type',
-        //   width: 200,
-        //   sortable: true,
-        //
-        // },
+        {
+          title: '文件传输主机',
+          key: 'file_host',
+          width: 200,
+          sortable: true
+        },
         {
           title: '文件传输类型',
           key: 'file_type',
@@ -247,6 +247,7 @@ export default {
     file_name: '',
     file_size: '',
     file_path: '',
+    file_host: '',
     file_type: '',
     remarks: ''
   },
@@ -266,49 +267,50 @@ export default {
     },
 
     uploadSucess (response, file) { // 上传成功钩子
-      // console.log('3333333333')
-      // console.log(this.file)
-      if (response.msg === '上传成功') {
-        this.$Message.success('导入成功')
-      } else {
-        this.$Message.error(response.msg)
-      }
-      file.url = response.data.actionUrl
+      console.log(file)
+      // if (response.msg === '上传成功') {
+      //   this.$Message.success('导入成功')
+      // } else {
+      //   this.$Message.error(response.msg)
+      // }
       console.log(response.data.actionUrl)
       this.files = null
-      this.fileName = ''
     },
     uploadError () { // 失败
       this.$Message.error('导入失败')
     },
-    // handleUpload (file) {
-    //   upload_file(this.formValfile, this.file).then(res => {
-    //     this.resultdate = res.data.result
-    //     this.$Message.success('上传成功')
-    //   }).catch(err => {
-    //     this.$Message.error(`上传错误 ${err}`)
-    //   })
-    //   this.file = file
-    //   return false
-    // },
-
+    // 上传
     handleUpload (file) {
-      console.log('00000000000000this.formValfile')
-      upload_file(this.formValfile, this.file).then(res => {
-        this.resultdate = res.data.result
-        this.$Message.success('上传成功')
-        console.log('111111111111111')
-      }).catch(err => {
-        this.$Message.error(`上传错误 ${err}`)
-      })
+      let from_data = new FormData()
       this.file = file
+      from_data.append('file', this.file)
+      from_data.append('data', this.formValfile)
+      if (this.formValfile.length === 0) {
+        this.$Message.warning(`上传错误,请选择上传的服务器！`)
+      } else {
+        upload_file(from_data).then(res => {
+          console.log(res.status)
+          if (res.status === 200) {
+            this.$Message.success(`上传成功！`)
+            // 接收后台返回数据
+            // let aa=res.date.result
+            // console.log(aa)
+          } else if (res.status === 401) {
+            this.$Message.warning(`没有权限！${error_401}`)
+          } else {
+            this.$Message.error(`上传失败！${error_404}&&${error_500}`)
+          }
+        }).catch(err => {
+          this.$Message.error(`上传错误 ${err}`)
+        })
+      }
       return false
     },
-    upload () {
-      this.loadingStatus = true
-      console.log(this.$refs.upload.post(this.file))
-      this.$refs.upload.post(this.file)
-    },
+    // upload () {
+    //   this.loadingStatus = true
+    //   console.log(this.$refs.upload.post(this.file))
+    //   this.$refs.upload.post(this.file)
+    // },
 
     // 表格的相关操作
     // 全选按钮操作实现
