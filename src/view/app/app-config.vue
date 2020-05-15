@@ -114,7 +114,7 @@ export default {
       webssh: false,
       columns: [
         {
-          title: '应用ID1121',
+          title: '应用ID',
           key: 'app_id',
           width: 120
         },

@@ -20,8 +20,10 @@ export default {
     // dev: 'https://www.easy-mock.com/mock/5add9213ce4d0e69998a6f51/iview-admin/',
     // dev: 'http://114.116.16.6:9991/',
     // pro: 'http://114.116.16.6:9991/'
-    dev: 'http://127.0.0.1:8000/',
-    pro: 'http://127.0.0.1:8000/'
+    // dev: 'http://10.0.0.46:8000/',
+    // pro: 'http://10.0.0.46:8000/'
+    dev: 'http://192.144.253.145:15464/',
+    pro: 'http://192.144.253.145:15464/'
   },
   /**
    * @description 默认打开的首页的路由name值，默认为home

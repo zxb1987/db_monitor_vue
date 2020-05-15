@@ -113,7 +113,7 @@ export default {
         {
           title: '设备',
           key: 'dev',
-          width: 100
+          width: 300
         },
         {
           title: '采集时间',

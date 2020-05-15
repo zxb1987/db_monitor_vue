@@ -143,13 +143,25 @@ export const getTestPUT = (id, data) => {
     method: 'PUT'
   })
 }
-export const getTestPOST = (id, data) => {
+
+export const getTestPOST = (data) => {
   return axios.request({
     url: `/assets/api/test`,
     data: data,
-    method: 'post'
+    method: 'post',
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
   })
 }
+
+// export const getTestPOST = (id, data) => {
+//   return axios.request({
+//     url: `/assets/api/test`,
+//     data: data,
+//     method: 'post'
+//   })
+// }
 export const getTestIdDelete = (id, data) => {
   return axios.request({
     url: `/assets/api/test/${id}`,

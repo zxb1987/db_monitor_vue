@@ -173,8 +173,7 @@ export default {
             }
             const status = params.row.status
             return h(Tag, { props: { color: levelMap[status]['color'] } }, levelMap[status]['desc'])
-          },
-          fixed: 'right'
+          }
         },
         {
           title: '采集时间',

@@ -354,71 +354,86 @@ export default {
         {
           title: '操作',
           key: 'action',
-          width: 500,
+          width: 600,
           align: 'center',
           render: (h, params) => {
             return h('div', [
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
 
-                  click: () => {
-                    this.handleConsole(params.row)
-                  }
-                }
-              }, '控制命令'),
-
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-
-                  click: () => {
-                    this.handleTestPUT(params.index)
-                  }
-                }
-              }, '测试PUT'),
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-
-                  click: () => {
-                    this.handleTestPOST(params.index)
-                  }
-                }
-              }, '测试POST'),
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-
-                  click: () => {
-                    this.handleTestDelete(params.index)
-                  }
-                }
-              }, '测试Delete'),
+              // h('Button', {
+              //   props: {
+              //     type: 'primary',
+              //     size: 'small'
+              //   },
+              //   style: {
+              //     marginRight: '5px'
+              //   },
+              //   on: {
+              //
+              //     click: () => {
+              //       this.handleConsole(params.row)
+              //     }
+              //   }
+              // }, '控制命令'),
+              // h('Button', {
+              //   props: {
+              //     type: 'primary',
+              //     size: 'small'
+              //   },
+              //   style: {
+              //     marginRight: '5px'
+              //   },
+              //   on: {
+              //
+              //     click: () => {
+              //       this.handleConsoleTest(params.row)
+              //     }
+              //   }
+              // }, '控制命令Test'),
+              // h('Button', {
+              //   props: {
+              //     type: 'primary',
+              //     size: 'small'
+              //   },
+              //   style: {
+              //     marginRight: '5px'
+              //   },
+              //   on: {
+              //
+              //     click: () => {
+              //       this.handleTestPUT(params.index)
+              //     }
+              //   }
+              // }, '测试PUT'),
+              // h('Button', {
+              //   props: {
+              //     type: 'primary',
+              //     size: 'small'
+              //   },
+              //   style: {
+              //     marginRight: '5px'
+              //   },
+              //   on: {
+              //
+              //     click: () => {
+              //       this.handleTestPOST(params.index)
+              //     }
+              //   }
+              // }, '测试POST'),
+              // h('Button', {
+              //   props: {
+              //     type: 'primary',
+              //     size: 'small'
+              //   },
+              //   style: {
+              //     marginRight: '5px'
+              //   },
+              //   on: {
+              //
+              //     click: () => {
+              //       this.handleTestDelete(params.index)
+              //     }
+              //   }
+              // }, '测试Delete'),
 
               h('Button', {
                 props: {
@@ -711,6 +726,10 @@ export default {
       let linuxUrl = 'http://114.116.16.6:8888/?hostname=' + row.host + '&username=root&password=' + password
       window.open(linuxUrl)
     },
+    handleConsoleTest (row) {
+      let id = this.data[index].id
+      window.open(`/api/host/ssh/${id}/?x-token=${localStorage.getItem('token')}`)
+    },
     handleTestPUT (index) {
       let id = this.data[index].id
       this.formData.tags = 1
@@ -733,6 +752,11 @@ export default {
           'age': 18,
           'sex': '男'
         },
+        'tests': {
+          'name': 'zxb',
+          'age': 18,
+          'sex': '男'
+        },
         'password': '123456'
       }
       getTestPOST(id, dataJson).then(res => {
@@ -745,7 +769,8 @@ export default {
         })
       })
     },
-    handleTestDelete (id) {
+    handleTestDelete (index) {
+      let id = this.data[index].id
       let dataJson = {
         'user': {
           'name': 'threedog',
@@ -755,13 +780,11 @@ export default {
         'password': '123456'
       }
       getTestIdDelete(id, dataJson).then(res => {
-        console.log('>>>>>>>>>:' + res)
-        console.log(res)
-        console.log(res.data)
-        console.log(res.data.error)
-        console.log('<<<<<<<<<:' + res)
-        this.$Message.success('删除linux配置成功!')
-        this.data.splice(index, 1)
+        console.log('>>>>>>>>>')
+        let listinfo = res['data'].data
+        let ss = res['data'].data.age
+        console.log(ss)
+        this.$Message.success(listinfo)
       }).catch(err => {
         console.log(err.response)
         this.$Message.error({

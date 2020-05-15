@@ -73,7 +73,7 @@
           <Scroll>
             <List>
               <ListItem :key="info.id" v-for="(info) in alarminfoList">
-                <ListItemMeta :description="info.alarm_content" :title="info.alarm_header"/>
+                <ListItemMeta :description="测试" :title="info.alarm_header"/>
               </ListItem>
             </List>
           </Scroll>
