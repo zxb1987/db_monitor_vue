@@ -49,6 +49,7 @@
 import { MysqlMenu } from '_c/top-menu'
 import { getMysqlStat, getMysqlStatHis } from '@/api/mysql'
 import { ChartPie, ChartLine1, ChartLine2, ChartLine3, ChartLine4 } from '_c/charts'
+import { formatDate } from '@/libs/tools'
 
 export default {
   name: 'mysql_myisam',
@@ -285,7 +286,7 @@ export default {
     get_mysql_stat_his (parameter) {
       getMysqlStatHis(parameter).then(res => {
         this.mysqlstatlist = res.data.results
-        this.checktimeData = this.mysqlstatlist.map(mysql => mysql.check_time)
+        this.checktimeData = this.mysqlstatlist.map(mysql => formatDate(new Date(mysql.check_time), 'yyyy-MM-dd hh:mm'))
         this.openfilesData = this.mysqlstatlist.map(mysql => mysql.open_files)
         this.opentablesData = this.mysqlstatlist.map(mysql => mysql.open_tables)
         this.slowqueriesData = this.mysqlstatlist.map(mysql => mysql.slow_queries)

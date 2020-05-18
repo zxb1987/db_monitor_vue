@@ -191,20 +191,22 @@ export default {
         this.redisinfoData = [
           {
             column1: '版本: ' + this.redisinfo.version,
-            column2: '角色: ' + this.redisinfo.role },
+            column2: '角色: ' + this.redisinfo.role
+          },
           {
             column1: '实例地址: ' + this.redisinfo.host + ':' + this.redisinfo.port,
-            column2: '实例类型: ' + this.redisinfo.redis_mode },
+            column2: '实例类型: ' + this.redisinfo.redis_mode
+          },
           {
             column1: '运行状态: ' + this.redis_status,
-            column2: '运行天数: ' + this.redisinfo.updays }
+            column2: '运行天数: ' + this.redisinfo.updays
+          }
         ]
         this.total_keys = this.redisinfo.total_keys
         this.used_memory = this.redisinfo.used_memory
         this.connected_clients = this.redisinfo.connected_clients
         this.hits_all = this.redisinfo.hits_all
         this.misses_all = this.redisinfo.misses_all
-        debugger
         if (this.hits_all + this.misses_all > 0) {
           this.hit_rate = Number(this.hits_all * 100 / (this.hits_all + this.misses_all)).toFixed(2)
         }

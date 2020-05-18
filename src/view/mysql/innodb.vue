@@ -48,6 +48,7 @@
 import { MysqlMenu } from '_c/top-menu'
 import { getMysqlStat, getMysqlStatHis } from '@/api/mysql'
 import { ChartPie, ChartLine1, ChartLine2, ChartLine3, ChartLine4 } from '_c/charts'
+import { formatDate } from '@/libs/tools'
 
 export default {
   name: 'mysql_myisam',
@@ -235,7 +236,7 @@ export default {
       getMysqlStatHis(parameter).then(res => {
         this.data = res.data.results
         this.mysqlstatlist = res.data.results
-        this.checktimeData = this.mysqlstatlist.map(mysql => mysql.check_time)
+        this.checktimeData = this.mysqlstatlist.map(mysql => formatDate(new Date(mysql.check_time), 'yyyy-MM-dd hh:mm'))
         this.bufferpoolhitData = this.mysqlstatlist.map(mysql => mysql.innodb_buffer_pool_hit)
         this.bufferpoolusedData = this.mysqlstatlist.map(mysql => (parseFloat(mysql.innodb_buffer_pool_pages_total - mysql.innodb_buffer_pool_pages_free) * 100 / mysql.innodb_buffer_pool_pages_total).toFixed(2))
         this.bufferpooldirtyData = this.mysqlstatlist.map(mysql => (parseFloat(mysql.innodb_buffer_pool_pages_dirty) * 100 / mysql.innodb_buffer_pool_pages_total).toFixed(2))

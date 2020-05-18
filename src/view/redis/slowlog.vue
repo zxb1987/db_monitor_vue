@@ -42,7 +42,6 @@ export default {
           key: 'start_time',
           width: 160,
           render: (h, params) => {
-            debugger
             const timestamp = params.row.start_time
             const start_time = getDate(timestamp, 'year')
             return h('div', start_time

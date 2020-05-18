@@ -385,7 +385,6 @@ export default {
     },
 
     page_change (parameter) {
-      debugger
       this.page_size = parameter
       console.log(parameter)
       if (this.page_size >= this.count) {

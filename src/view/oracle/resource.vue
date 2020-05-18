@@ -540,7 +540,6 @@ export default {
           width: 120,
           align: 'center',
           render: (h, params) => {
-            debugger
             const user = params.row.USERNAME
             return h('div', [
               h('Button', {

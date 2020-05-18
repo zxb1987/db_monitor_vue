@@ -226,7 +226,6 @@ export default {
     },
     get_redis_stat_list (parameter) {
       getRedisStatList(parameter).then(res => {
-        debugger
         this.data = res.data.results
         this.count = res.data.count
         console.log(this.data)

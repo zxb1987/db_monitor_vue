@@ -26,6 +26,7 @@ import { LinuxMenu } from '_c/top-menu'
 import InforCard from '_c/info-card'
 import { getLinuxStatHis } from '@/api/linux'
 import { ChartPie, SimpleChartPie, ChartLine2, ChartLine4 } from '_c/charts'
+import { formatDate } from '@/libs/tools'
 
 export default {
   name: 'linux_view',
@@ -81,7 +82,7 @@ export default {
     get_linux_stat_his (parameter) {
       getLinuxStatHis(parameter).then(res => {
         this.linuxinfoList = res.data.results
-        this.checktimeData = this.linuxinfoList.map(linux => linux.check_time)
+        this.checktimeData = this.linuxiostatlist.map(linux => formatDate(new Date(linux.check_time), 'yyyy-MM-dd hh:mm'))
         this.membufferData = this.linuxinfoList.map(linux => linux.mem_buffer)
         this.memcacheData = this.linuxinfoList.map(linux => linux.mem_cache)
         this.memfreeData = this.linuxinfoList.map(linux => linux.mem_free)

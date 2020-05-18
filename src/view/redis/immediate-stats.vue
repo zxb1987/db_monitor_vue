@@ -79,7 +79,6 @@ export default {
     },
     get_redis_immediatestats (parameter) {
       getRedisImmediateStats(parameter).then(res => {
-        debugger
         var allData = res.data
         for (const section in allData) {
           const sectionData = allData[section]

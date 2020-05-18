@@ -146,7 +146,7 @@ export default {
       iosData: [],
       qtimeData: [],
       stimeData: [],
-      chart1_title: ['IO请求平均大小', '读请求平均大小', '写请求平均大小'],
+      chart1_title: ['IO请求平均大小量', '读请求平均大小', '写请求平均大小'],
       chart2_title: ['IO响应时间', '读响应时间', '写响应时间', 'IO请求队列时间', 'IO请求服务时间'],
       chart3_title: ['IO请求数', '每秒读合并数', '每秒写合并数', 'ios', '每秒读请求数', '每秒写请求数'],
       chart4_title: ['IO吞吐量', '每秒读(MB)', '每秒写(MB)'],
@@ -179,7 +179,7 @@ export default {
     get_linux_io_stat_his (parameter) {
       getLinuxIoStatHis(parameter).then(res => {
         this.linuxiostatlist = res.data.results
-        this.checktimeData = this.linuxiostatlist.map(linux => linux.check_time)
+        this.checktimeData = this.linuxiostatlist.map(linux => formatDate(new Date(linux.check_time), 'yyyy-MM-dd hh:mm'))
         this.rdsData = this.linuxiostatlist.map(linux => linux.rd_s)
         this.rdavgkbData = this.linuxiostatlist.map(linux => linux.rd_avgkb)
         this.rdmsData = this.linuxiostatlist.map(linux => linux.rd_m_s)
