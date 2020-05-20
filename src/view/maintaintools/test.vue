@@ -8,14 +8,14 @@
           <span style="margin-left: 20px">已选择的：</span>
           <span style="margin-left: 10px" v-for="val in formsshtags" :key="val.tags">{{val.tags}}</span>
         </div>
-        <Form  ref="formsshtags" :model="formsshtags" :label-width="80">
+        <Form  :label-width="80">
 <!--          //ref="formsshtags" :model="formsshtags"-->
           <FormItem label="数据列表" prop="get_linux_tags">
             <Select
               multiple
               :max-tag-count="1"
               v-model="formsshtags" filterable allow-create>
-              <Option v-for="item in linuxdata" :value="item" :key="item.tags" :label="item.tags">{{item.tags}}</Option>
+              <Option v-for="item in linuxdata" :value="item.id" :key="item.tags" :label="item.tags">{{item.tags}}</Option>
             </Select>
           </FormItem>
         </Form>
@@ -86,14 +86,15 @@ export default {
         upload_fileall(from_data).then(res => {
           console.log(res)
           if (res.status === 200) {
-            let aa = res.date.result
-            console.log(aa)
+            console.log(res.status)
             this.$Message.success(`上传成功！`)
           } else if (res.status === 401) {
             this.$Message.warning(`没有权限！${error_401}`)
           } else {
             this.$Message.error(`上传失败！${error_404}&&${error_500}`)
           }
+        }).then(date => {
+          console.log(date)
         }).catch(err => {
           this.$Message.error(`上传错误 ${err}`)
         })

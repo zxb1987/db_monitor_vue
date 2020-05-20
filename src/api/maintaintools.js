@@ -51,14 +51,14 @@ export const getUploadDownFileList = parameter => {
   })
 }
 
-export const upload_file = date => {
+export const upload_file = (date) => {
   return axios.request({
-    method: 'post',
     url: `/maintaintools/uploadfile`,
-    data: date,
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
+    method: 'post',
+    data: date
+    // headers: {
+    //   'Content-Type': 'multipart/form-data'
+    // }
   })
 }
 

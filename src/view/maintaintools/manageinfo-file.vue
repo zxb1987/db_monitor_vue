@@ -8,21 +8,21 @@
           <span style="margin-left: 20px">已选择的：</span>
           <span style="margin-left: 10px" v-for="val in formValfile" :key="val.tags">{{val.tags}}</span>
         </div>
-<!--       ref="formValfile" :model="formValfile"-->
-        <Form  :label-width="80">
+        <!--       ref="formValfile" :model="formValfile"-->
+        <Form :label-width="80">
           <FormItem label="数据列表" prop="get_linux_tags">
             <Select
               multiple
               :max-tag-count="1"
               v-model="formValfile" filterable allow-create>
-              <Option v-for="item in linuxdata" :value="item.tags" :key="item.tags" :label="item.tags">{{item.tags}}</Option>
+              <Option v-for="item in linuxdata" :value="item.id" :key="item.tags" :label="item.tags">{{item.tags}}</Option>
             </Select>
           </FormItem>
         </Form>
         <!--        开始进行拖拽上传-->
         <Upload
           multiple
-          ref="upload"
+          :ref="upload"
           type="drag"
           :action="uploadurl"
           :before-upload="handleUpload"
@@ -31,10 +31,11 @@
           :on-success="uploadSucess"
           :on-error="uploadError"
           :show-file-list="false"
+          :data="uploadData"
           paste
           class="uploadfile">
           <div style="width: 50%;height:80%; margin: auto ;">
-            <Icon type="ios-cloud-upload" style="color: #3399ff;" size="130" ></Icon>
+            <Icon type="ios-cloud-upload" style="color: #3399ff;" size="130"></Icon>
             <p>点击或拖拽文件上传</p>
           </div>
         </Upload>
@@ -45,7 +46,7 @@
       <div style="width: 100%;height: 50%;">
         <row class="ssh_date">
           <Col class="showssh">
-            <div >
+            <div>
               <Tree :data="data"></Tree>
             </div>
           </Col>
@@ -53,17 +54,17 @@
         </row>
         <row class="down">
           <Col class="showdwon">
-<!--            <Upload-->
-<!--              multiple-->
-<!--              type="drag"-->
-<!--              :action="upload"-->
-<!--              class="uploadfile"-->
-<!--              :show-file-list="false">-->
-<!--              <div style="width: auto;margin: auto">-->
-<!--                <Icon type="ios-cloud-upload" size="50" style="color: #3399ff;align-content: center"></Icon>-->
-<!--                <p>点击或拖拽文件上传</p>-->
-<!--              </div>-->
-<!--            </Upload>-->
+            <!--            <Upload-->
+            <!--              multiple-->
+            <!--              type="drag"-->
+            <!--              :action="upload"-->
+            <!--              class="uploadfile"-->
+            <!--              :show-file-list="false">-->
+            <!--              <div style="width: auto;margin: auto">-->
+            <!--                <Icon type="ios-cloud-upload" size="50" style="color: #3399ff;align-content: center"></Icon>-->
+            <!--                <p>点击或拖拽文件上传</p>-->
+            <!--              </div>-->
+            <!--            </Upload>-->
           </Col>
         </row>
 
@@ -119,16 +120,17 @@ export default {
   data () {
     return {
       linuxdata: [], // 数据集合
-      formValfile: [], // 获取选中的服务器数据
+      formValfile: {}, // 获取选中的服务器数据
       filename_search: '', // 搜索字段
       // uploadHost:'',//上传的地址
       uploadurl: '',
       actionUrl: '',
-      file: null,
+      file: [],
       fileName: '',
       loadingStatus: false,
       resultdate: '',
       uploadFile: [],
+      uploadData: {},
       data: [],
       count: 0,
       page_size: 10,
@@ -265,6 +267,57 @@ export default {
         this.$Message.error(`获取Linux主机资源信息错误 ${err}`)
       })
     },
+    // 获取选中数据
+    linuxhostval (hostval) {
+      let host = []
+      let allhost = {}
+      if (hostval.length > 0) {
+        for (let i in hostval) {
+          allhost = {}
+          allhost.tags = hostval[i].tags
+          allhost.host = hostval[i].host
+          allhost.user = hostval[i].user
+          allhost.password = hostval[i].password
+          allhost.sshport = hostval[i].sshport
+          host.push(allhost)
+        }
+      }
+      return host
+    },
+    // 上传
+    handleUpload (files) {
+      this.file = files
+      // console.log(this.formValfile)
+      let from_data = new FormData()
+      from_data.append('data', this.formValfile)
+      from_data.append('file', this.file)
+      console.log(this.file)
+      upload_file(from_data).then(res => {
+        console.log(res)
+      })
+
+      // if (this.formValfile.length === 0) {
+      //   this.$Message.warning(`上传错误,请选择上传的服务器！`)
+      // } else {
+      //   upload_file(from_data).then(res => {
+      //     console.log(res.status)
+      //     if (res.status === 200) {
+      //       this.$Message.success(`上传成功！`)
+      //       // 接收后台返回数据
+      //       // let aa=res.date.result
+      //       // console.log(aa)
+      //     } else if (res.status === 401) {
+      //       this.$Message.warning(`没有权限！${error_401}`)
+      //     } else {
+      //       this.$Message.error(`上传失败！${error_404}&&${error_500}`)
+      //     }
+      //   }).catch(err => {
+      //     this.$Message.error(`上传错误 ${err}`)
+      //   })
+      // }
+
+      return false
+    },
 
     uploadSucess (response, file) { // 上传成功钩子
       console.log(file)
@@ -279,34 +332,8 @@ export default {
     uploadError () { // 失败
       this.$Message.error('导入失败')
     },
-    // 上传
-    handleUpload (file) {
-      let from_data = new FormData()
-      this.file = file
-      from_data.append('file', this.file)
-      from_data.append('data', this.formValfile)
-      if (this.formValfile.length === 0) {
-        this.$Message.warning(`上传错误,请选择上传的服务器！`)
-      } else {
-        upload_file(from_data).then(res => {
-          console.log(res.status)
-          if (res.status === 200) {
-            this.$Message.success(`上传成功！`)
-            // 接收后台返回数据
-            // let aa=res.date.result
-            // console.log(aa)
-          } else if (res.status === 401) {
-            this.$Message.warning(`没有权限！${error_401}`)
-          } else {
-            this.$Message.error(`上传失败！${error_404}&&${error_500}`)
-          }
-        }).catch(err => {
-          this.$Message.error(`上传错误 ${err}`)
-        })
-      }
-      return false
-    },
     // upload () {
+    //
     //   this.loadingStatus = true
     //   console.log(this.$refs.upload.post(this.file))
     //   this.$refs.upload.post(this.file)
@@ -368,8 +395,9 @@ export default {
     width: 40%;
     float: left;
   }
-  .uploadfile{
-    margin-left:20px;
+
+  .uploadfile {
+    margin-left: 20px;
   }
 
   .right {
@@ -388,25 +416,29 @@ export default {
     float: right;
 
   }
-  .ssh_date{
+
+  .ssh_date {
     height: 200%;
     width: 50%;
     /*background-color: #9145f0;*/
     float: left;
   }
-  .showssh{
+
+  .showssh {
     height: auto;
     width: 100%;
     float: left;
 
   }
-  .down{
+
+  .down {
     height: 200%;
     width: 50%;
     /*background-color: #666666;*/
     float: right;
   }
-  .showdwon{
+
+  .showdwon {
     height: auto;
     width: 100%;
     float: right;
