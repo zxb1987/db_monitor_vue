@@ -479,12 +479,12 @@ export default {
       console.log(index, id)
       deleteCommandList(id).then(res => {
         console.log(res)
-        this.$Message.success('删除角色信息成功!')
+        this.$Message.success('删除命令信息成功!')
         this.data.splice(index, 1)
       }).catch(err => {
         console.log(err.response)
         this.$Message.error({
-          content: `删除角色错误 ${Object.entries(err.response.data)}`,
+          content: `删除命令错误 ${Object.entries(err.response.data)}`,
           duration: 10,
           closable: true
         })
