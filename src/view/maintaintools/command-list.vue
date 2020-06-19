@@ -220,7 +220,7 @@ export default {
         {
           title: '操作',
           key: 'action',
-          width: 250,
+          width: 280,
           align: 'center',
           render: (h, params) => {
             return h('div', [
@@ -381,6 +381,7 @@ export default {
       this.get_commd_info(`commname=${this.commname_search}` && `usecommand=${this.commname_search}`)
     },
     clear_search () {
+      this.count = 0
       this.commname_search = ''
       this.get_commd_info()
     },

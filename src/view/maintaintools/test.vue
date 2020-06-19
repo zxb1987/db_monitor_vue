@@ -1,43 +1,76 @@
 <template>
 
   <div class="layout">
-    <div class="left">
-      <div style="width: 50%;height: 50%;">
-        <!--  multiple  filterable allow-create    获取上到的服务器主机-->
-        <div>
-          <span style="margin-left: 20px">已选择的：</span>
-          <span style="margin-left: 10px" v-for="val in formsshtags" :key="val.tags">{{val.tags}}</span>
-        </div>
-        <Form  :label-width="80">
-<!--          //ref="formsshtags" :model="formsshtags"-->
-          <FormItem label="数据列表" prop="get_linux_tags">
-            <Select
-              multiple
-              :max-tag-count="1"
-              v-model="formsshtags" filterable allow-create>
-              <Option v-for="item in linuxdata" :value="item.id" :key="item.tags" :label="item.tags">{{item.tags}}</Option>
-            </Select>
-          </FormItem>
-        </Form>
-
-        <Upload
-          multiple
-          ref="upload"
-          type="drag"
-          :before-upload="beforeUpload"
-          action=""
-          :show-upload-list="true"
-          :on-success="uploadSucess1"
-          :on-error="uploadError1"
-          :show-file-list="false"
-          :loading="loadingStatus"
-          class="uploadfile">
-          <div style="width: 50%;height:80%; margin: auto ;">
-            <Icon type="ios-cloud-upload" style="color: #3399ff;" size="130" ></Icon>
-            <p>点击或拖拽文件上传</p>
+    <div style="height: 40%">
+      <div class="left">
+        <div style="width: 50%;height: 50%;">
+          <!--  multiple  filterable allow-create    获取上到的服务器主机-->
+          <div>
+            <span style="margin-left: 20px">已选择的：</span>
+            <span style="margin-left: 10px" v-for="val in formsshtags" :key="val.tags">{{val.tags}}</span>
           </div>
-        </Upload>
+          <Form :label-width="80">
+            <!--          //ref="formsshtags" :model="formsshtags"-->
+            <FormItem label="主机列表" prop="get_linux_tags">
+              <Select
+                multiple
+                :max-tag-count="1"
+                v-model="formsshtags" filterable allow-create>
+                <Option v-for="item in linuxdata" :value="item.id" :key="item.tags" :label="item.tags">{{item.tags}}
+                </Option>
+              </Select>
+            </FormItem>
+          </Form>
+          <Upload
+            multiple
+            ref="upload"
+            type="drag"
+            :before-upload="beforeUpload"
+            action=""
+            :show-upload-list="true"
+            :on-success="uploadSucess1"
+            :on-error="uploadError1"
+            :show-file-list="false"
+            :loading="loadingStatus"
+            class="uploadfile">
+            <div style="width: 50%;height:80%; margin: auto ;">
+              <Icon type="ios-cloud-upload" style="color: #3399ff;" size="130"></Icon>
+              <p>点击或拖拽文件上传</p>
+            </div>
+          </Upload>
 
+        </div>
+      </div>
+
+      <div class="right">
+
+        <row style="width: 20%">
+          <Form :label-width="80">
+            <!--          //ref="formsshtags" :model="formsshtags"-->
+            <FormItem label="主机列表" prop="get_linux_tags">
+              <Select
+
+                :max-tag-count="1"
+                v-model="getformsshtags" filterable allow-create @on-change="sshval">
+                <Option v-for="item in linuxdata" :value="item.id" :key="item.tags" :label="item.tags">{{item.tags}}
+                </Option>
+              </Select>
+            </FormItem>
+          </Form>
+        </row>
+        <!--      <br>-->
+        <row style="width: 100%;height: 100%;margin: auto">
+          <div class="ssh_left">
+            <!--         {{this.ssh_Folderall}}-->
+            <list v-for="getall in ssh_Folderall" :value="getall" :key="getall">
+              {{getall.split('\r\n')}}
+            </list>
+          </div>
+
+          <div class="ssh_right">
+            gsf
+          </div>
+        </row>
       </div>
     </div>
 
@@ -45,23 +78,27 @@
 </template>
 
 <script>
-import { getLinuxList, upload_fileall } from '@/api/maintaintools'
+import { getLinuxList, ssh_Folder } from '@/api/maintaintools'
 
 export default {
 
   data () {
     return {
       linuxdata: [], // 数据集合
-      formsshtags: {}, // 获取选中的服务器数据
+      getformsshtags: {}, // 获取选中的服务器数据
       get_linux_tags: {},
-      filelist: []
+      formsshtags: {},
+      filelist: [],
+      ssh_Folderall: []
     }
   },
 
   // vue生命周期，打开页面就加载的数据放在这里
   created () {
     this.get_linux_list()
+    // this.getCatalogPath(this.ssh_Folderall)
   },
+
   methods: {
     // 获取主机信息
     get_linux_list (parameter) {
@@ -71,60 +108,49 @@ export default {
         this.$Message.error(`获取Linux主机资源信息错误 ${err}`)
       })
     },
-
-    // 上传前操作，判断文件类型，大小
-    beforeUpload (file) {
-      let from_data = new FormData()
-      this.filelist = file
-      console.log(this.filelist)
-      from_data.append('file', this.filelist)
-      from_data.append('data', this.formsshtags)
-      console.log(this.formsshtags)
-      if (this.formsshtags.length === 0) {
-        this.$Message.warning(`上传错误,请选择上传的服务器！`)
-      } else {
-        upload_fileall(from_data).then(res => {
-          console.log(res)
-          if (res.status === 200) {
-            console.log(res.status)
-            this.$Message.success(`上传成功！`)
-          } else if (res.status === 401) {
-            this.$Message.warning(`没有权限！${error_401}`)
-          } else {
-            this.$Message.error(`上传失败！${error_404}&&${error_500}`)
-          }
-        }).then(date => {
-          console.log(date)
-        }).catch(err => {
-          this.$Message.error(`上传错误 ${err}`)
-        })
+    // 获取服务器目录树
+    sshval (val) {
+      console.log(val)
+      let folder = []
+      let fileListall = []
+      ssh_Folder(val).then(resdate => {
+        // console.log(resdate.data)
+        // this.ssh_Folderall=resdate.data .split('\r\n')
+        folder.push(resdate.data.split('\r\n'))
+        console.log(folder)
+        // this.ssh_Folderall =folder
+        for (let b in folder) {
+          fileListall.push(folder[b])
+        }
+        // this.ssh_Folderall=fileListall
+        for (let fal in fileListall) {
+          console.log(fileListall[fal])
+          this.ssh_Folderall = fileListall[fal]
+        }
+      })
+    },
+    // 判断后带缀的的文件
+    GetExtName (fileName) {
+      let extArr = fileName.split('.')
+      let exts = ['folder', 'folder-unempty', 'sql', 'c', 'cpp', 'cs', 'flv', 'css', 'js', 'htm', 'html', 'java', 'log', 'mht', 'php', 'url', 'xml', 'ai', 'bmp', 'cdr', 'gif', 'ico', 'jpeg', 'jpg', 'JPG', 'png', 'psd', 'webp', 'ape', 'avi', 'flv', 'mkv', 'mov', 'mp3', 'mp4', 'mpeg', 'mpg', 'rm', 'rmvb', 'swf', 'wav', 'webm', 'wma', 'wmv', 'rtf', 'docx', 'fdf', 'potm', 'pptx', 'txt', 'xlsb', 'xlsx', '7z', 'cab', 'iso', 'bz2', 'rar', 'zip', 'gz', 'bt', 'file', 'apk', 'bookfolder', 'folder', 'folder-empty', 'folder-unempty', 'fromchromefolder', 'documentfolder', 'fromphonefolder', 'mix', 'musicfolder', 'picturefolder', 'videofolder', 'sefolder', 'access', 'mdb', 'accdb', 'sql', 'c', 'cpp', 'cs', 'js', 'fla', 'flv', 'htm', 'html', 'java', 'log', 'mht', 'php', 'url', 'xml', 'ai', 'bmp', 'cdr', 'gif', 'ico', 'jpeg', 'jpg', 'JPG', 'png', 'psd', 'webp', 'ape', 'avi', 'flv', 'mkv', 'mov', 'mp3', 'mp4', 'mpeg', 'mpg', 'rm', 'rmvb', 'swf', 'wav', 'webm', 'wma', 'wmv', 'doc', 'docm', 'dotx', 'dotm', 'dot', 'rtf', 'docx', 'pdf', 'fdf', 'ppt', 'pptm', 'pot', 'potm', 'pptx', 'txt', 'xls', 'csv', 'xlsm', 'xlsb', 'xlsx', '7z', 'gz', 'cab', 'iso', 'rar', 'zip', 'bt', 'file', 'apk', 'css']
+      let extLastName = extArr[extArr.length - 1]
+      for (let i = 0; i < exts.length; i++) {
+        if (exts[i] === extLastName) {
+          return exts[i]
+        }
       }
-
-      return false
+      return 'file'
     },
-    // 上传
-    upload () {
-      this.loadingStatus = true
-      console.log(this.$refs.upload.post(this.file))
-      this.$refs.upload.post(this.file)
-    },
-    // 文件上传的状态
-    loadingStatus () {
-      this.$Message.error('上传失败')
-    },
-    // 返回成功
-    uploadSucess1 (response, file, fileList) {
-      // this.$Message.info(response.msg);
-      // this.$Message.info(file);
-      // this.$Message.info(fileList);
-      console.log(response)
-      console.log(file)
-      console.log(fileList)
-      console.log(this.response.data)
-    },
-    // 返回失败
-    uploadError1 () {
-      this.$Message.error('导入失败')
+    // 处理换行符
+    transformLineBreak (str) {
+      if (!str) {
+        return []
+      }
+      let arr = str.split(/\r/g)
+      if (!arr[arr.length]) { // 如果最后一行后面有换行符，删除数组最后一项空字符串
+        arr.pop()
+      }
+      return arr
     }
 
   }
@@ -133,7 +159,6 @@ export default {
 
 <style scoped>
   html, body {
-    height: 100%;
     padding: 0;
     margin: 0;
   }
@@ -151,21 +176,48 @@ export default {
     width: 40%;
     float: left;
   }
-  .uploadfile{
-    margin-left:20px;
+
+  .uploadfile {
+    margin-left: 20px;
   }
 
+  .ssh_right {
+    width: 50%;
+    height: 100%;
+    float: left;
+    content: initial;
+    overflow-y: scroll;
+    white-space: pre-wrap;
+    border-style: double; /*border-style 边框属性*/
+    border-width: 2px;
+    border-color: #348EED;
+    /*padding-right: 10%;*/
+    background: #97d4b7;
+  }
   .right {
     height: 30%;
     width: 60%;
     padding: 16px;
-    /*background-color: #86d0f0;*/
-    float: right;
+  /*background-color: #86d0f0;*/
+  float: right;
+  }
+
+  .ssh_left {
+    width: 50%;
+    float: left;
+    height: 100%;
+    font-size: large;
+    content: initial;
+    overflow-y: scroll; /*内容可拉伸*/
+    white-space: pre-wrap; /*内容可拉伸 */
+    border-style: double; /*border-style 边框属性*/
+    border-width: 2px;
+    border-color: #348EED;
+  /*background: #348EED;*/
   }
 
   .footer {
-
-    height: 70%;
+    height: 60%;
     width: 100%;
     /*background-color: #9145f0;*/
     float: right;
