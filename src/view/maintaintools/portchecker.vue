@@ -70,7 +70,6 @@ export default {
   // name: "portchecker",
   data () {
     return {
-      // mode:'',
       create: true,
       ruleValidate: '',
       showfooter: '',
